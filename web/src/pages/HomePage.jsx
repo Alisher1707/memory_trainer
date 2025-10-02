@@ -46,21 +46,11 @@ const HomePage = ({ onNavigate }) => {
     <div className="page-container">
       <div className="hero-section">
         <div className="hero-background">
-          <div className="hero-visual-card">
-            <div className="visual-card-grid">
-              <div className="visual-card-item">
-                <div className="card-face"></div>
-              </div>
-              <div className="visual-card-item">
-                <div className="card-face"></div>
-              </div>
-              <div className="visual-card-item">
-                <div className="card-face"></div>
-              </div>
-              <div className="visual-card-item">
-                <div className="card-face"></div>
-              </div>
-            </div>
+          <div className="hero-pattern">
+            <div className="pattern-circle pattern-1"></div>
+            <div className="pattern-circle pattern-2"></div>
+            <div className="pattern-circle pattern-3"></div>
+            <div className="pattern-dots"></div>
           </div>
         </div>
         <div className="hero-overlay"></div>

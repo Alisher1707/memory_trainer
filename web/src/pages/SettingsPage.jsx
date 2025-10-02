@@ -200,16 +200,16 @@ const SettingsPage = ({ onNavigate }) => {
 
   return (
     <div className="page-container settings-page">
-      <div className="settings-header">
+      <div className="page-header">
+        <h1>⚙️ Sozlamalar</h1>
         <Button
-          variant="outline"
+          variant="ghost"
+          size="small"
           onClick={() => onNavigate('home')}
           icon="←"
         >
           Orqaga
         </Button>
-        <h1>⚙️ Sozlamalar</h1>
-        <p>O'yin tajribangizni sozlang</p>
       </div>
 
       <div className="settings-sections">
@@ -252,6 +252,7 @@ const SettingsPage = ({ onNavigate }) => {
             <div className="account-actions">
               <Button
                 variant="outline"
+                size="small"
                 onClick={handleExportData}
                 icon="📥"
               >
@@ -260,6 +261,7 @@ const SettingsPage = ({ onNavigate }) => {
 
               <Button
                 variant="outline"
+                size="small"
                 onClick={() => setShowLogoutModal(true)}
                 icon="🚪"
               >
@@ -268,6 +270,7 @@ const SettingsPage = ({ onNavigate }) => {
 
               <Button
                 variant="danger"
+                size="small"
                 onClick={() => setShowDeleteModal(true)}
                 icon="🗑️"
               >
@@ -298,6 +301,7 @@ const SettingsPage = ({ onNavigate }) => {
           <div className="app-actions">
             <Button
               variant="outline"
+              size="small"
               onClick={() => window.open('https://github.com', '_blank')}
               icon="💻"
             >
@@ -306,6 +310,7 @@ const SettingsPage = ({ onNavigate }) => {
 
             <Button
               variant="outline"
+              size="small"
               onClick={() => alert('Yordam sahifasi tez orada qo\'shiladi')}
               icon="❓"
             >
@@ -314,6 +319,7 @@ const SettingsPage = ({ onNavigate }) => {
 
             <Button
               variant="outline"
+              size="small"
               onClick={() => alert('Maxfiylik siyosati tez orada qo\'shiladi')}
               icon="🔒"
             >

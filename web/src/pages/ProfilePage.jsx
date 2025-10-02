@@ -22,7 +22,7 @@ const ProfilePage = ({ onNavigate }) => {
             <div className="auth-actions">
               <Button
                 variant="primary"
-                size="large"
+                size="small"
                 onClick={() => {
                   setAuthMode('login')
                   setShowAuthModal(true)
@@ -34,7 +34,7 @@ const ProfilePage = ({ onNavigate }) => {
 
               <Button
                 variant="outline"
-                size="large"
+                size="small"
                 onClick={() => {
                   setAuthMode('signup')
                   setShowAuthModal(true)
@@ -119,6 +119,7 @@ const ProfilePage = ({ onNavigate }) => {
         <h1>👤 Profil</h1>
         <Button
           variant="outline"
+          size="small"
           onClick={logout}
           icon="🚪"
         >
@@ -133,9 +134,9 @@ const ProfilePage = ({ onNavigate }) => {
               {isGuest ? '👤' : '👨‍💻'}
             </div>
             <div className="user-details">
-              <h2>{isGuest ? 'Mehmon' : user.name}</h2>
+              <h2 className={isGuest ? 'guest-name' : ''}>{isGuest ? 'Mehmon' : user.name}</h2>
               {user.email && <p className="user-email">{user.email}</p>}
-              <p className="user-joined">
+              <p className={`user-joined ${isGuest ? 'guest-mode' : ''}`}>
                 {isGuest ? 'Mehmon rejimi' : `Qo'shilgan: ${new Date(user.createdAt).toLocaleDateString('uz-UZ')}`}
               </p>
             </div>
@@ -217,6 +218,7 @@ const ProfilePage = ({ onNavigate }) => {
               <p>Hali natijalar yo'q. Birinchi o'yiningizdna keyin bu yerda ko'rinadi.</p>
               <Button
                 variant="primary"
+                size="small"
                 onClick={() => onNavigate('game')}
                 icon="🎮"
               >
@@ -275,6 +277,7 @@ const ProfilePage = ({ onNavigate }) => {
         <div className="profile-actions">
           <Button
             variant="primary"
+            size="small"
             onClick={() => onNavigate('game')}
             icon="🎮"
           >
@@ -283,6 +286,7 @@ const ProfilePage = ({ onNavigate }) => {
 
           <Button
             variant="outline"
+            size="small"
             onClick={() => onNavigate('leaderboard')}
             icon="🏆"
           >
@@ -291,6 +295,7 @@ const ProfilePage = ({ onNavigate }) => {
 
           <Button
             variant="outline"
+            size="small"
             onClick={() => onNavigate('settings')}
             icon="⚙️"
           >
