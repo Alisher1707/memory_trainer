@@ -74,6 +74,9 @@ const NumberSequenceGame = ({ onBack, difficulty = 'easy' }) => {
     if (newUserSequence[newUserSequence.length - 1] !== sequence[newUserSequence.length - 1]) {
       setGameState('wrong')
       setMessage('❌ Noto\'g\'ri! O\'yin tugadi.')
+
+      // Natijani saqlash
+      updateUserStats('number_sequence', score, difficulty, 0, newUserSequence.length)
       return
     }
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { leaderboardAPI } from '../services/api'
 
 const Highscores = ({ onBack }) => {
   const { user } = useAuth()
@@ -12,9 +13,9 @@ const Highscores = ({ onBack }) => {
 
   const games = [
     { id: 'all', name: 'Barcha O\'yinlar', icon: '🎮' },
-    { id: 'memory-cards', name: 'Xotira Kartalari', icon: '🃏' },
-    { id: 'number-sequence', name: 'Raqam Ketma-ketligi', icon: '🔢' },
-    { id: 'color-sequence', name: 'Rang Ketma-ketligi', icon: '🌈' }
+    { id: 'memory_card', name: 'Xotira Kartalari', icon: '🃏' },
+    { id: 'number_sequence', name: 'Raqam Ketma-ketligi', icon: '🔢' },
+    { id: 'color_sequence', name: 'Rang Ketma-ketligi', icon: '🌈' }
   ]
 
   const difficulties = [
@@ -45,62 +46,29 @@ const Highscores = ({ onBack }) => {
 
   const loadGlobalScores = async () => {
     try {
-      // Try to fetch from server, fallback to localStorage
-      const params = new URLSearchParams()
-      if (selectedGame !== 'all') params.append('gameType', selectedGame)
-      if (selectedDifficulty !== 'all') params.append('difficulty', selectedDifficulty)
-      params.append('limit', '20')
+      const gameType = selectedGame !== 'all' ? selectedGame : null
+      const difficulty = selectedDifficulty !== 'all' ? selectedDifficulty : null
 
-      const response = await fetch(`/api/scores/global?${params}`)
+      const response = await leaderboardAPI.getLeaderboard(gameType, difficulty, 50)
 
-      if (response.ok) {
-        const data = await response.json()
-        setGlobalScores(data.scores || [])
+      if (response.success) {
+        setGlobalScores(response.leaderboard || [])
       } else {
-        // Fallback to mock/local data
-        setGlobalScores(getMockGlobalScores())
+        setGlobalScores([])
       }
     } catch (error) {
-      // Fallback to mock data when server is not available
-      setGlobalScores(getMockGlobalScores())
+      console.error('Error loading global scores:', error)
+      setGlobalScores([])
     }
   }
 
   const loadFriendsScores = async () => {
     try {
-      // For now, use mock data since friends system is not fully implemented
-      setFriendsScores(getMockFriendsScores())
+      // Do'stlar tizimi hali to'liq ishlamaydi
+      setFriendsScores([])
     } catch (error) {
       setFriendsScores([])
     }
-  }
-
-  const getMockGlobalScores = () => {
-    const mockScores = [
-      { id: '1', userName: 'Pro Player', gameType: 'memory-cards', difficulty: 'hard', score: 2500, timestamp: '2024-01-15T10:30:00Z' },
-      { id: '2', userName: 'Memory Master', gameType: 'number-sequence', difficulty: 'medium', score: 2200, timestamp: '2024-01-14T15:20:00Z' },
-      { id: '3', userName: 'Color Expert', gameType: 'color-sequence', difficulty: 'easy', score: 1800, timestamp: '2024-01-13T09:45:00Z' },
-      { id: '4', userName: 'Brain Power', gameType: 'memory-cards', difficulty: 'medium', score: 1950, timestamp: '2024-01-12T14:15:00Z' },
-      { id: '5', userName: 'Quick Thinker', gameType: 'number-sequence', difficulty: 'hard', score: 2300, timestamp: '2024-01-11T11:00:00Z' }
-    ]
-
-    let filtered = mockScores
-    if (selectedGame !== 'all') {
-      filtered = filtered.filter(s => s.gameType === selectedGame)
-    }
-    if (selectedDifficulty !== 'all') {
-      filtered = filtered.filter(s => s.difficulty === selectedDifficulty)
-    }
-
-    return filtered.sort((a, b) => b.score - a.score)
-  }
-
-  const getMockFriendsScores = () => {
-    return [
-      { id: '1', userName: 'Dostim Ali', gameType: 'memory-cards', difficulty: 'medium', score: 1600, timestamp: '2024-01-14T12:30:00Z' },
-      { id: '2', userName: 'Bekzod', gameType: 'number-sequence', difficulty: 'easy', score: 1200, timestamp: '2024-01-13T16:20:00Z' },
-      { id: '3', userName: 'Malika', gameType: 'color-sequence', difficulty: 'hard', score: 2100, timestamp: '2024-01-12T10:45:00Z' }
-    ]
   }
 
   const getGameIcon = (gameType) => {

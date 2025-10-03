@@ -139,11 +139,13 @@ const Profile = ({ onBack }) => {
           <h3>🏆 Eng Yaxshi Natijalar</h3>
           <div className="scores-grid">
             {Object.entries(user.stats.bestScores || {}).map(([gameKey, score]) => {
-              const [gameType, difficulty] = gameKey.split('_')
+              const parts = gameKey.split('_')
+              const difficulty = parts[parts.length - 1]
+              const gameType = parts.slice(0, -1).join('_')
               const gameNames = {
-                'memory-cards': 'Xotira Kartalari',
-                'number-sequence': 'Raqam Ketma-ketligi',
-                'color-sequence': 'Rang Ketma-ketligi'
+                'memory_card': 'Xotira Kartalari',
+                'number_sequence': 'Raqam Ketma-ketligi',
+                'color_sequence': 'Rang Ketma-ketligi'
               }
               const diffNames = {
                 'easy': 'Oson',
@@ -219,9 +221,9 @@ const Profile = ({ onBack }) => {
             <div className="games-list">
               {user.stats.recentGames.slice(0, 15).map((game, index) => {
                 const gameNames = {
-                  'memory-cards': 'Xotira Kartalari',
-                  'number-sequence': 'Raqam Ketma-ketligi',
-                  'color-sequence': 'Rang Ketma-ketligi'
+                  'memory_card': 'Xotira Kartalari',
+                  'number_sequence': 'Raqam Ketma-ketligi',
+                  'color_sequence': 'Rang Ketma-ketligi'
                 }
 
                 const diffNames = {
@@ -242,8 +244,8 @@ const Profile = ({ onBack }) => {
                     <div className="session-game-info">
                       <div className="game-icon-wrapper">
                         <span className="game-icon">
-                          {game.gameType === 'memory-cards' ? '🃏' :
-                           game.gameType === 'number-sequence' ? '🔢' : '🌈'}
+                          {game.gameType === 'memory_card' ? '🃏' :
+                           game.gameType === 'number_sequence' ? '🔢' : '🌈'}
                         </span>
                         {isHighScore && <span className="high-score-badge">🔥</span>}
                       </div>

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
+import { authAPI, scoreAPI, userAPI } from '../services/api'
 
 const AuthContext = createContext()
 
@@ -16,27 +17,32 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('memoryTrainerUser')
-    const guestMode = localStorage.getItem('memoryTrainerGuest')
-
-    if (savedUser) {
-      setUser(JSON.parse(savedUser))
-    } else if (guestMode) {
-      setIsGuest(true)
-    }
-
-    setLoading(false)
+    verifyToken()
   }, [])
 
-  const signup = async (email, password, name) => {
-    try {
-      // Bu yerda server bilan bog'lanish bo'ladi
-      // Hozircha localStorage ishlatamiz
-      const userData = {
-        id: Date.now(),
-        email,
-        name,
-        createdAt: new Date().toISOString(),
+  const verifyToken = async () => {
+    const token = localStorage.getItem('authToken')
+    const guestMode = localStorage.getItem('memoryTrainerGuest')
+
+    if (token) {
+      try {
+        const response = await authAPI.verify()
+        if (response.success) {
+          setUser(response.user)
+          setIsGuest(false)
+        } else {
+          localStorage.removeItem('authToken')
+          localStorage.removeItem('memoryTrainerUser')
+        }
+      } catch (error) {
+        localStorage.removeItem('authToken')
+        localStorage.removeItem('memoryTrainerUser')
+      }
+    } else if (guestMode) {
+      const guestData = {
+        id: 'guest_' + Date.now(),
+        name: 'Mehmon',
+        isGuest: true,
         stats: {
           gamesPlayed: 0,
           totalScore: 0,
@@ -44,36 +50,54 @@ export const AuthProvider = ({ children }) => {
           achievements: []
         }
       }
+      setIsGuest(true)
+      setUser(guestData)
+    }
 
-      localStorage.setItem('memoryTrainerUser', JSON.stringify(userData))
-      localStorage.removeItem('memoryTrainerGuest')
-      setUser(userData)
-      setIsGuest(false)
+    setLoading(false)
+  }
 
-      return { success: true, user: userData }
+  const signup = async (email, password, name) => {
+    try {
+      const response = await authAPI.signup(email, password, name)
+
+      if (response.success) {
+        localStorage.setItem('authToken', response.token)
+        localStorage.setItem('memoryTrainerUser', JSON.stringify(response.user))
+        localStorage.removeItem('memoryTrainerGuest')
+        setUser(response.user)
+        setIsGuest(false)
+        return { success: true, user: response.user }
+      }
+
+      return { success: false, error: 'Ro\'yxatdan o\'tishda xatolik' }
     } catch (error) {
-      return { success: false, error: error.message }
+      return {
+        success: false,
+        error: error.response?.data?.error || error.message || 'Server xatoligi'
+      }
     }
   }
 
   const login = async (email, password) => {
     try {
-      // Bu yerda server bilan bog'lanish bo'ladi
-      const savedUser = localStorage.getItem('memoryTrainerUser')
+      const response = await authAPI.login(email, password)
 
-      if (savedUser) {
-        const userData = JSON.parse(savedUser)
-        if (userData.email === email) {
-          setUser(userData)
-          setIsGuest(false)
-          localStorage.removeItem('memoryTrainerGuest')
-          return { success: true, user: userData }
-        }
+      if (response.success) {
+        localStorage.setItem('authToken', response.token)
+        localStorage.setItem('memoryTrainerUser', JSON.stringify(response.user))
+        localStorage.removeItem('memoryTrainerGuest')
+        setUser(response.user)
+        setIsGuest(false)
+        return { success: true, user: response.user }
       }
 
-      return { success: false, error: 'Foydalanuvchi topilmadi' }
+      return { success: false, error: 'Kirish amalga oshmadi' }
     } catch (error) {
-      return { success: false, error: error.message }
+      return {
+        success: false,
+        error: error.response?.data?.error || error.message || 'Server xatoligi'
+      }
     }
   }
 
@@ -97,93 +121,94 @@ export const AuthProvider = ({ children }) => {
   }
 
   const logout = () => {
+    localStorage.removeItem('authToken')
     localStorage.removeItem('memoryTrainerUser')
     localStorage.removeItem('memoryTrainerGuest')
     setUser(null)
     setIsGuest(false)
   }
 
-  const updateUserStats = (gameType, score, difficulty, timeSpent, moves) => {
+  const updateUserStats = async (gameType, score, difficulty, timeSpent, moves) => {
     if (!user) return
 
-    const gameKey = `${gameType}_${difficulty}`
-    const gameResult = {
-      score,
-      difficulty,
-      timeSpent,
-      moves,
-      timestamp: new Date().toISOString(),
-      date: new Date().toDateString()
-    }
-
-    const updatedUser = {
-      ...user,
-      stats: {
-        ...user.stats,
-        gamesPlayed: user.stats.gamesPlayed + 1,
-        totalScore: user.stats.totalScore + score,
-        bestScores: {
-          ...user.stats.bestScores,
-          [gameKey]: Math.max(user.stats.bestScores[gameKey] || 0, score)
-        },
-        recentGames: [
-          gameResult,
-          ...(user.stats.recentGames || []).slice(0, 19)
-        ],
-        achievements: updateAchievements(user.stats, gameResult)
+    // Mehmon uchun faqat local yangilanish
+    if (isGuest) {
+      const gameKey = `${gameType}_${difficulty}`
+      const updatedUser = {
+        ...user,
+        stats: {
+          ...user.stats,
+          gamesPlayed: user.stats.gamesPlayed + 1,
+          totalScore: user.stats.totalScore + score,
+          bestScores: {
+            ...user.stats.bestScores,
+            [gameKey]: Math.max(user.stats.bestScores[gameKey] || 0, score)
+          }
+        }
       }
+      setUser(updatedUser)
+      return
     }
 
-    setUser(updatedUser)
-
-    if (!isGuest) {
-      localStorage.setItem('memoryTrainerUser', JSON.stringify(updatedUser))
-    }
-
-    submitScoreToServer(gameResult)
-  }
-
-  const updateAchievements = (currentStats, gameResult) => {
-    const achievements = [...(currentStats.achievements || [])]
-
-    if (currentStats.gamesPlayed + 1 === 1 && !achievements.includes('first_game')) {
-      achievements.push('first_game')
-    }
-
-    if (currentStats.gamesPlayed + 1 === 10 && !achievements.includes('veteran')) {
-      achievements.push('veteran')
-    }
-
-    if (gameResult.score >= 1500 && !achievements.includes('high_scorer')) {
-      achievements.push('high_scorer')
-    }
-
-    if (gameResult.difficulty === 'hard' && !achievements.includes('difficulty_master')) {
-      achievements.push('difficulty_master')
-    }
-
-    return achievements
-  }
-
-  const submitScoreToServer = async (gameResult) => {
+    // Serverga yuborish
     try {
-      const response = await fetch('/api/scores', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: user.id,
-          ...gameResult
-        })
-      })
+      console.log('Natija yuborilmoqda:', { gameType, score, difficulty, timeSpent, moves })
+      const response = await scoreAPI.submitScore(gameType, score, difficulty, timeSpent, moves)
+      console.log('Server javobi:', response)
 
-      if (response.ok) {
-        console.log('Score submitted successfully')
+      if (response.success) {
+        // Foydalanuvchi ma'lumotlarini yangilash
+        const updatedStats = await userAPI.getStats(user._id)
+        console.log('Yangilangan stats:', updatedStats)
+
+        if (updatedStats.success) {
+          const updatedUser = {
+            ...user,
+            stats: updatedStats.stats
+          }
+          setUser(updatedUser)
+          localStorage.setItem('memoryTrainerUser', JSON.stringify(updatedUser))
+        }
+
+        // Yutuqlarni ko'rsatish
+        if (response.newAchievements && response.newAchievements.length > 0) {
+          console.log('Yangi yutuqlar:', response.newAchievements)
+          // Bu yerda achievement notification ko'rsatish mumkin
+        }
       }
     } catch (error) {
-      console.log('Score submission failed, storing locally')
-      const localScores = JSON.parse(localStorage.getItem('pendingScores') || '[]')
-      localScores.push({ userId: user.id, ...gameResult })
-      localStorage.setItem('pendingScores', JSON.stringify(localScores))
+      console.error('Natija yuborishda xatolik:', error)
+      console.error('Xatolik detallar:', error.response?.data)
+
+      // Local fallback - agar server ishlamasa
+      const gameKey = `${gameType}_${difficulty}`
+      const updatedUser = {
+        ...user,
+        stats: {
+          ...user.stats,
+          gamesPlayed: user.stats.gamesPlayed + 1,
+          totalScore: user.stats.totalScore + score,
+          bestScores: {
+            ...user.stats.bestScores,
+            [gameKey]: Math.max(user.stats.bestScores?.[gameKey] || 0, score)
+          },
+          recentGames: [
+            {
+              gameType,
+              score,
+              difficulty,
+              timeSpent,
+              moves,
+              timestamp: new Date().toISOString(),
+              date: new Date().toDateString()
+            },
+            ...(user.stats.recentGames || []).slice(0, 19)
+          ]
+        }
+      }
+      setUser(updatedUser)
+      localStorage.setItem('memoryTrainerUser', JSON.stringify(updatedUser))
+      console.log('Local fallback ishlatildi')
     }
   }
 

@@ -1,14 +1,26 @@
 {
   "name": "memory-trainer-server",
   "version": "1.0.0",
-  "description": "Backend server for Memory Trainer game",
+  "description": "Professional backend server for Memory Trainer game with MongoDB, JWT authentication, and comprehensive API",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed": "node scripts/seed.js"
   },
-  "keywords": ["memory", "game", "server", "api"],
+  "keywords": [
+    "memory",
+    "game",
+    "server",
+    "api",
+    "express",
+    "mongodb",
+    "jwt",
+    "authentication",
+    "leaderboard",
+    "statistics"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -17,10 +29,17 @@
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.5.0",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "express-rate-limit": "^7.1.5"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
   },
   "packageManager": "pnpm@10.13.1"
 }

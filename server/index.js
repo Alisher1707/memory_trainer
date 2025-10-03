@@ -1,253 +1,141 @@
 const express = require('express')
 const cors = require('cors')
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
 require('dotenv').config()
+
+const connectDB = require('./config/database')
+const securityConfig = require('./config/security')
+const { devFormat, prodFormat, errorLogger } = require('./config/logger')
+const { errorHandler, notFound } = require('./middleware/errorHandler')
+const { apiLimiter } = require('./middleware/rateLimiter')
+
+// Routes
+const authRoutes = require('./routes/authRoutes')
+const userRoutes = require('./routes/userRoutes')
+const scoreRoutes = require('./routes/scoreRoutes')
+const leaderboardRoutes = require('./routes/leaderboardRoutes')
+const statisticsRoutes = require('./routes/statisticsRoutes')
 
 const app = express()
 const PORT = process.env.PORT || 3001
 
-app.use(cors())
+// MongoDB ga ulanish
+connectDB()
+
+// Security middleware
+securityConfig().forEach(middleware => app.use(middleware))
+
+// CORS configuration
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  credentials: true,
+  optionsSuccessStatus: 200
+}
+app.use(cors(corsOptions))
+
+// Body parser
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
-// In-memory storage (in production, use a real database like MongoDB)
-let users = []
-let scores = []
-let globalHighscores = []
-
-// Helper functions
-const generateToken = (userId) => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET || 'memory_trainer_secret', { expiresIn: '7d' })
+// Logging
+if (process.env.NODE_ENV === 'production') {
+  app.use(prodFormat)
+} else {
+  app.use(devFormat)
 }
 
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization']
-  const token = authHeader && authHeader.split(' ')[1]
+// Rate limiting
+app.use('/api', apiLimiter)
 
-  if (!token) {
-    return res.status(401).json({ error: 'Access token required' })
-  }
-
-  jwt.verify(token, process.env.JWT_SECRET || 'memory_trainer_secret', (err, user) => {
-    if (err) {
-      return res.status(403).json({ error: 'Invalid token' })
-    }
-    req.user = user
-    next()
-  })
-}
-
-// Auth Routes
-app.post('/api/auth/signup', async (req, res) => {
-  try {
-    const { email, password, name } = req.body
-
-    if (!email || !password || !name) {
-      return res.status(400).json({ error: 'All fields are required' })
-    }
-
-    const existingUser = users.find(u => u.email === email)
-    if (existingUser) {
-      return res.status(400).json({ error: 'User already exists' })
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10)
-    const user = {
-      id: Date.now().toString(),
-      email,
-      name,
-      password: hashedPassword,
-      createdAt: new Date().toISOString(),
-      stats: {
-        gamesPlayed: 0,
-        totalScore: 0,
-        bestScores: {},
-        achievements: [],
-        recentGames: []
-      }
-    }
-
-    users.push(user)
-
-    const token = generateToken(user.id)
-    const { password: _, ...userResponse } = user
-
-    res.status(201).json({
-      success: true,
-      user: userResponse,
-      token
-    })
-  } catch (error) {
-    res.status(500).json({ error: 'Server error' })
-  }
-})
-
-app.post('/api/auth/login', async (req, res) => {
-  try {
-    const { email, password } = req.body
-
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' })
-    }
-
-    const user = users.find(u => u.email === email)
-    if (!user) {
-      return res.status(400).json({ error: 'Invalid credentials' })
-    }
-
-    const isValidPassword = await bcrypt.compare(password, user.password)
-    if (!isValidPassword) {
-      return res.status(400).json({ error: 'Invalid credentials' })
-    }
-
-    const token = generateToken(user.id)
-    const { password: _, ...userResponse } = user
-
-    res.json({
-      success: true,
-      user: userResponse,
-      token
-    })
-  } catch (error) {
-    res.status(500).json({ error: 'Server error' })
-  }
-})
-
-// Score Routes
-app.post('/api/scores', authenticateToken, (req, res) => {
-  try {
-    const { gameType, score, difficulty, timeSpent, moves } = req.body
-    const userId = req.user.userId
-
-    const scoreEntry = {
-      id: Date.now().toString(),
-      userId,
-      gameType,
-      score,
-      difficulty,
-      timeSpent,
-      moves,
-      timestamp: new Date().toISOString(),
-      date: new Date().toDateString()
-    }
-
-    scores.push(scoreEntry)
-
-    // Update user stats
-    const user = users.find(u => u.id === userId)
-    if (user) {
-      const gameKey = `${gameType}_${difficulty}`
-      user.stats.gamesPlayed += 1
-      user.stats.totalScore += score
-      user.stats.bestScores[gameKey] = Math.max(user.stats.bestScores[gameKey] || 0, score)
-      user.stats.recentGames = [scoreEntry, ...(user.stats.recentGames || []).slice(0, 19)]
-    }
-
-    // Update global highscores
-    updateGlobalHighscores(scoreEntry)
-
-    res.json({ success: true, scoreEntry })
-  } catch (error) {
-    res.status(500).json({ error: 'Server error' })
-  }
-})
-
-app.get('/api/scores/global', (req, res) => {
-  try {
-    const { gameType, difficulty, limit = 10 } = req.query
-
-    let filteredScores = scores
-    if (gameType) {
-      filteredScores = filteredScores.filter(s => s.gameType === gameType)
-    }
-    if (difficulty) {
-      filteredScores = filteredScores.filter(s => s.difficulty === difficulty)
-    }
-
-    const topScores = filteredScores
-      .sort((a, b) => b.score - a.score)
-      .slice(0, parseInt(limit))
-      .map(score => {
-        const user = users.find(u => u.id === score.userId)
-        return {
-          ...score,
-          userName: user ? user.name : 'Anonymous'
-        }
-      })
-
-    res.json({ success: true, scores: topScores })
-  } catch (error) {
-    res.status(500).json({ error: 'Server error' })
-  }
-})
-
-app.get('/api/scores/user/:userId', authenticateToken, (req, res) => {
-  try {
-    const { userId } = req.params
-    const { limit = 20 } = req.query
-
-    const userScores = scores
-      .filter(s => s.userId === userId)
-      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-      .slice(0, parseInt(limit))
-
-    res.json({ success: true, scores: userScores })
-  } catch (error) {
-    res.status(500).json({ error: 'Server error' })
-  }
-})
-
-// User Stats Routes
-app.get('/api/users/:userId/stats', authenticateToken, (req, res) => {
-  try {
-    const { userId } = req.params
-    const user = users.find(u => u.id === userId)
-
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' })
-    }
-
-    res.json({ success: true, stats: user.stats })
-  } catch (error) {
-    res.status(500).json({ error: 'Server error' })
-  }
-})
-
-// Friends/Social Features (placeholder)
-app.get('/api/friends/:userId', authenticateToken, (req, res) => {
-  try {
-    // Placeholder for friends functionality
-    res.json({ success: true, friends: [] })
-  } catch (error) {
-    res.status(500).json({ error: 'Server error' })
-  }
-})
-
-// Helper function to update global highscores
-const updateGlobalHighscores = (scoreEntry) => {
-  const key = `${scoreEntry.gameType}_${scoreEntry.difficulty}`
-
-  if (!globalHighscores[key]) {
-    globalHighscores[key] = []
-  }
-
-  globalHighscores[key].push(scoreEntry)
-  globalHighscores[key] = globalHighscores[key]
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 100) // Keep top 100 scores
-}
-
-// Health check
+// Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() })
+  res.json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development'
+  })
 })
 
+// API Routes
+app.use('/api/auth', authRoutes)
+app.use('/api/users', userRoutes)
+app.use('/api/scores', scoreRoutes)
+app.use('/api/leaderboard', leaderboardRoutes)
+app.use('/api/statistics', statisticsRoutes)
+
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({
+    name: 'Memory Trainer API',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      auth: {
+        signup: 'POST /api/auth/signup',
+        login: 'POST /api/auth/login',
+        verify: 'GET /api/auth/verify'
+      },
+      users: {
+        profile: 'GET /api/users/:userId',
+        update: 'PUT /api/users/:userId',
+        password: 'PUT /api/users/:userId/password',
+        stats: 'GET /api/users/:userId/stats',
+        statistics: 'GET /api/users/:userId/statistics',
+        achievements: 'GET /api/users/:userId/achievements',
+        delete: 'DELETE /api/users/:userId'
+      },
+      scores: {
+        submit: 'POST /api/scores',
+        global: 'GET /api/scores/global',
+        userScores: 'GET /api/scores/user/:userId'
+      },
+      leaderboard: {
+        main: 'GET /api/leaderboard',
+        topPlayers: 'GET /api/leaderboard/top-players',
+        byGame: 'GET /api/leaderboard/by-game/:gameType',
+        rank: 'GET /api/leaderboard/rank/:userId'
+      },
+      statistics: {
+        global: 'GET /api/statistics/global',
+        report: 'GET /api/statistics/report/:period',
+        compare: 'GET /api/statistics/compare/:userId1/:userId2',
+        activity: 'GET /api/statistics/activity/:userId'
+      },
+      health: 'GET /api/health'
+    }
+  })
+})
+
+// Error logging middleware
+app.use(errorLogger)
+
+// Error handling middlewares (oxirida bo'lishi kerak)
+app.use(notFound)
+app.use(errorHandler)
+
+// Server ishga tushirish
 app.listen(PORT, () => {
-  console.log(`🚀 Memory Trainer Server running on port ${PORT}`)
-  console.log(`📊 API endpoints:`)
-  console.log(`   POST /api/auth/signup - User registration`)
-  console.log(`   POST /api/auth/login - User login`)
-  console.log(`   POST /api/scores - Submit score`)
-  console.log(`   GET /api/scores/global - Global highscores`)
-  console.log(`   GET /api/health - Health check`)
+  console.log(`
+╔════════════════════════════════════════════════════════════╗
+║                                                            ║
+║     🚀 Memory Trainer Server                               ║
+║                                                            ║
+║     Port: ${PORT}                                        ║
+║     Environment: ${process.env.NODE_ENV || 'development'}                             ║
+║     MongoDB: ${process.env.MONGODB_URI ? 'Connected' : 'Using default'}                                  ║
+║                                                            ║
+║     📊 API Documentation: http://localhost:${PORT}         ║
+║     🏥 Health Check: http://localhost:${PORT}/api/health   ║
+║                                                            ║
+╚════════════════════════════════════════════════════════════╝
+  `)
+})
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM signal received: closing HTTP server')
+  server.close(() => {
+    console.log('HTTP server closed')
+    process.exit(0)
+  })
 })

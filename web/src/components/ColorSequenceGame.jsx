@@ -130,6 +130,9 @@ const ColorSequenceGame = ({ onBack, difficulty = 'easy' }) => {
     if (newUserSequence[currentIndex].id !== sequence[currentIndex].id) {
       setGameState('wrong')
       setMessage('❌ Noto\'g\'ri rang! O\'yin tugadi.')
+
+      // Natijani saqlash
+      updateUserStats('color_sequence', score, difficulty, 0, newUserSequence.length)
       return
     }
 

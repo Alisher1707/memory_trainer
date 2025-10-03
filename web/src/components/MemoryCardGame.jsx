@@ -70,7 +70,7 @@ const MemoryCardGame = ({ onBack, difficulty = 'easy' }) => {
     setScore(calculatedScore)
 
     const result = {
-      gameType: 'memory-cards',
+      gameType: 'memory_card',
       score: calculatedScore,
       difficulty,
       timeSpent: gameTime,

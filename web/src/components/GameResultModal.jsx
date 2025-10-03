@@ -106,9 +106,9 @@ const GameResultModal = ({
 
   const getGameIcon = (gameType) => {
     switch (gameType) {
-      case 'memory-cards': return '🃏'
-      case 'number-sequence': return '🔢'
-      case 'color-sequence': return '🌈'
+      case 'memory_card': return '🃏'
+      case 'number_sequence': return '🔢'
+      case 'color_sequence': return '🌈'
       default: return '🎮'
     }
   }
