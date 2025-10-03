@@ -425,9 +425,10 @@ body.dark-mode .tip-item p {
 }
 
 .games-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-8);
+  display: flex;
+  gap: var(--space-6);
+  justify-content: center;
+  flex-wrap: nowrap;
 }
 
 .game-card {
@@ -435,13 +436,15 @@ body.dark-mode .tip-item p {
   border-radius: var(--radius-2xl);
   padding: var(--space-8);
   box-shadow: 0 4px 12px rgba(16, 42, 67, 0.08);
-  cursor: pointer;
   transition: all var(--duration-300) ease;
   position: relative;
   overflow: hidden;
   border: 2px solid var(--gray-200);
   display: flex;
   flex-direction: column;
+  flex: 1;
+  max-width: 350px;
+  min-width: 280px;
 }
 
 .game-card:hover {

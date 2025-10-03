@@ -113,6 +113,7 @@ const GamePage = ({
         <div className="page-header">
           <Button
             variant="outline"
+            size="small"
             onClick={handleBackToHome}
             icon="←"
           >
@@ -134,12 +135,7 @@ const GamePage = ({
                 key={game.id}
                 className="game-selection-card"
                 style={{ '--bg-color': game.bgColor }}
-                onClick={() => handleGameSelect(game.id)}
               >
-                <div className="game-card-header">
-                  <div className="game-icon-large">{game.icon}</div>
-                </div>
-
                 <div className="game-card-content">
                   <h3>{game.title}</h3>
                   <p className="game-description">{game.description}</p>
@@ -156,12 +152,11 @@ const GamePage = ({
                     variant="primary"
                     className="select-game-btn"
                     icon="➡️"
+                    onClick={() => handleGameSelect(game.id)}
                   >
                     Tanlash
                   </Button>
                 </div>
-
-                <div className="card-hover-effect" />
               </div>
             ))}
           </div>
@@ -185,6 +180,7 @@ const GamePage = ({
         <div className="page-header">
           <Button
             variant="outline"
+            size="small"
             onClick={() => setGameState('selectGame')}
             icon="←"
           >
@@ -196,8 +192,7 @@ const GamePage = ({
 
         <div className="level-selection">
           <div className="selected-game-preview">
-            <div className="game-preview-card" style={{ '--bg-color': currentGame.bgColor }}>
-              <span className="game-icon">{currentGame.icon}</span>
+            <div className="game-preview-card">
               <div className="game-details">
                 <h3>{currentGame.title}</h3>
                 <p>{currentGame.description}</p>
@@ -214,7 +209,7 @@ const GamePage = ({
           <div className="start-section">
             <Button
               variant="primary"
-              size="large"
+              size="medium"
               onClick={handleStartGame}
               icon="🚀"
             >

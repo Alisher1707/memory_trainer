@@ -91,78 +91,36 @@ const LevelSelector = ({
             key={level.id}
             className={`level-option ${selectedLevel === level.id ? 'selected' : ''}`}
             onClick={() => onLevelSelect(level.id)}
-            onMouseEnter={() => setHoveredLevel(level.id)}
-            onMouseLeave={() => setHoveredLevel(null)}
             style={{ '--level-color': level.color }}
           >
             <div className="level-header">
               <div className="level-icon">{level.icon}</div>
               <div className="level-info">
-                <h4>{level.name}</h4>
-                <p>{level.description}</p>
+                <h4>{level.name} daraja</h4>
+                <p>{level.details}</p>
               </div>
               <div className="level-selector-radio">
                 {selectedLevel === level.id ? '●' : '○'}
               </div>
             </div>
 
-            <div className="level-details">
-              <p>{level.details}</p>
-            </div>
-
-            <div className="level-stats">
-              <div className="stat-item">
-                <span className="stat-icon">🎯</span>
-                <span className="stat-label">Elementlar</span>
-                <span className="stat-value">{level.stats.elements}</span>
+            <div className="level-challenge">
+              <div className="challenge-item">
+                <span className="challenge-label">Maqsad:</span>
+                <span className="challenge-value">
+                  Barcha juftlarni {level.stats.time === 'Cheksiz' ? 'toping' : `${level.stats.time} ichida toping`}
+                </span>
               </div>
-              <div className="stat-item">
-                <span className="stat-icon">⏰</span>
-                <span className="stat-label">Vaqt</span>
-                <span className="stat-value">{level.stats.time}</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-icon">❤️</span>
-                <span className="stat-label">Imkonlar</span>
-                <span className="stat-value">{level.stats.lives}</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-icon">⭐</span>
-                <span className="stat-label">Ball</span>
-                <span className="stat-value">{level.stats.multiplier}</span>
+              <div className="challenge-item">
+                <span className="challenge-label">Mukofot:</span>
+                <span className="challenge-value">
+                  Ball {level.stats.multiplier} ko'paytiriladi
+                </span>
               </div>
             </div>
           </div>
         ))}
       </div>
-
-      {showPreview && previewLevel && (
-        <div className="level-preview">
-          <div className="preview-header">
-            <span className="preview-icon">{previewLevel.icon}</span>
-            <h4>{previewLevel.name} daraja</h4>
-          </div>
-
-          <div className="preview-description">
-            <p>{previewLevel.details}</p>
-          </div>
-
-          <div className="preview-challenge">
-            <div className="challenge-item">
-              <span className="challenge-label">Maqsad:</span>
-              <span className="challenge-value">
-                Barcha juftlarni {previewLevel.stats.time === 'Cheksiz' ? 'toping' : `${previewLevel.stats.time} ichida toping`}
-              </span>
-            </div>
-            <div className="challenge-item">
-              <span className="challenge-label">Mukofot:</span>
-              <span className="challenge-value">
-                Ball {previewLevel.stats.multiplier} ko'paytiriladi
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

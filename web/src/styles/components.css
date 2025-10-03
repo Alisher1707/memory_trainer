@@ -731,6 +731,16 @@
   align-items: center;
 }
 
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  padding-right: var(--space-12);
+}
+
 .input {
   width: 100%;
   padding: var(--space-3) var(--space-4);

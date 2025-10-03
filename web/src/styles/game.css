@@ -57,16 +57,19 @@
   border-radius: var(--radius-2xl);
   padding: var(--space-8);
   box-shadow: var(--shadow-lg);
-  cursor: pointer;
   transition: all var(--duration-300) ease;
   position: relative;
   overflow: hidden;
   border: 3px solid transparent;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 100%;
 }
 
 .game-selection-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: var(--shadow-2xl);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
   border-color: var(--bg-color, var(--primary-500));
 }
 
@@ -100,22 +103,11 @@
 
 .select-game-btn {
   width: 100%;
+  margin-top: auto;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
 }
 
-.card-hover-effect {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 5px;
-  background: linear-gradient(90deg, var(--bg-color, var(--primary-500)) 0%, var(--bg-color, var(--primary-700)) 100%);
-  opacity: 0;
-  transition: opacity var(--duration-300) ease;
-}
-
-.game-selection-card:hover .card-hover-effect {
-  opacity: 1;
-}
 
 .selection-tips {
   background: var(--gray-50);
@@ -166,32 +158,27 @@
 }
 
 .game-preview-card {
-  background: linear-gradient(135deg, var(--bg-color, var(--primary-500)) 0%, var(--bg-color, var(--primary-700)) 100%);
+  background: var(--white);
   border-radius: var(--radius-2xl);
-  padding: var(--space-8);
+  padding: var(--space-6);
   display: flex;
   align-items: center;
   gap: var(--space-6);
-  color: var(--white);
-  box-shadow: var(--shadow-xl);
-}
-
-.game-preview-card .game-icon {
-  font-size: 4rem;
+  border: 2px solid var(--gray-200);
+  box-shadow: var(--shadow-md);
 }
 
 .game-details h3 {
   font-size: var(--text-2xl);
   font-weight: var(--font-bold);
   margin-bottom: var(--space-2);
-  color: var(--white);
+  color: var(--gray-900);
 }
 
 .game-details p {
   font-size: var(--text-base);
-  opacity: 0.95;
   margin: 0;
-  color: var(--white);
+  color: var(--gray-600);
 }
 
 /* Level Selector Component */
@@ -280,46 +267,26 @@
   color: var(--level-color, var(--primary-600));
 }
 
-.level-details {
-  margin-bottom: var(--space-4);
-}
-
-.level-details p {
-  font-size: var(--text-sm);
-  color: var(--gray-700);
-  margin: 0;
-}
-
-.level-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: var(--space-3);
-  padding-top: var(--space-4);
-  border-top: 2px solid var(--gray-200);
-}
-
-.level-stats .stat-item {
+.level-challenge {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-2);
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--gray-700);
 }
 
-.level-stats .stat-icon {
-  font-size: var(--text-xl);
+.challenge-item {
+  display: flex;
+  gap: var(--space-2);
 }
 
-.level-stats .stat-label {
-  font-size: var(--text-xs);
-  color: var(--gray-500);
-  font-weight: var(--font-medium);
+.challenge-label {
+  font-weight: var(--font-semibold);
+  color: var(--gray-700);
 }
 
-.level-stats .stat-value {
-  font-size: var(--text-base);
-  color: var(--gray-900);
-  font-weight: var(--font-bold);
+.challenge-value {
+  color: var(--gray-600);
 }
 
 /* Level Preview */
