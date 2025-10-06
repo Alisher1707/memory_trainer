@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { useLanguage } from '../contexts/LanguageContext'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 
 const AuthPage = ({ mode = 'login', onNavigate }) => {
+  const { t } = useLanguage()
   const [currentMode, setCurrentMode] = useState(mode)
   const [formData, setFormData] = useState({
     name: '',
@@ -39,13 +41,13 @@ const AuthPage = ({ mode = 'login', onNavigate }) => {
         }
       } else {
         if (formData.password !== formData.confirmPassword) {
-          setError('Parollar bir xil emas')
+          setError(t('auth.passwordMismatch'))
           setLoading(false)
           return
         }
 
         if (formData.password.length < 6) {
-          setError('Parol kamida 6 ta belgidan iborat bo\'lishi kerak')
+          setError(t('auth.passwordTooShort'))
           setLoading(false)
           return
         }
@@ -58,7 +60,7 @@ const AuthPage = ({ mode = 'login', onNavigate }) => {
         }
       }
     } catch (err) {
-      setError('Xatolik yuz berdi. Qaytadan urinib ko\'ring.')
+      setError(t('auth.errorOccurred'))
     } finally {
       setLoading(false)
     }
@@ -89,7 +91,7 @@ const AuthPage = ({ mode = 'login', onNavigate }) => {
               variant="ghost"
               onClick={() => onNavigate('home')}
             >
-              ← Bosh sahifa
+              ← {t('auth.backToHome')}
             </Button>
 
             <div className="auth-brand">
@@ -104,66 +106,63 @@ const AuthPage = ({ mode = 'login', onNavigate }) => {
                   className={`auth-tab ${currentMode === 'login' ? 'active' : ''}`}
                   onClick={() => switchMode('login')}
                 >
-                  Kirish
+                  {t('auth.login')}
                 </button>
                 <button
                   className={`auth-tab ${currentMode === 'signup' ? 'active' : ''}`}
                   onClick={() => switchMode('signup')}
                 >
-                  Ro'yxatdan O'tish
+                  {t('auth.signup')}
                 </button>
               </div>
 
               <form onSubmit={handleSubmit} className="auth-form">
                 <div className="form-header">
                   <h2>
-                    {currentMode === 'login' ? 'Tizimga Kirish' : 'Ro\'yxatdan O\'tish'}
+                    {currentMode === 'login' ? t('auth.loginTitle') : t('auth.signupTitle')}
                   </h2>
                   <p>
-                    {currentMode === 'login'
-                      ? 'Hisobingizga kiring va o\'yinni davom ettiring'
-                      : 'Yangi hisob yarating va xotirangizni rivojlantiring'
-                    }
+                    {currentMode === 'login' ? t('auth.loginSubtitle') : t('auth.signupSubtitle')}
                   </p>
                 </div>
 
                 {currentMode === 'signup' && (
                   <Input
                     type="text"
-                    placeholder="Ismingiz"
+                    placeholder={t('auth.yourName')}
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
                     required
-                    label="Ism"
+                    label={t('auth.name')}
                   />
                 )}
 
                 <Input
                   type="email"
-                  placeholder="emailingiz@example.com"
+                  placeholder={t('auth.yourEmail')}
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   required
-                  label="Email"
+                  label={t('auth.email')}
                 />
 
                 <Input
                   type="password"
-                  placeholder={currentMode === 'signup' ? 'Kamida 6 ta belgi' : 'Parolingiz'}
+                  placeholder={currentMode === 'signup' ? t('auth.minChars') : t('auth.yourPassword')}
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   required
-                  label="Parol"
+                  label={t('auth.password')}
                 />
 
                 {currentMode === 'signup' && (
                   <Input
                     type="password"
-                    placeholder="Parolni qayta kiriting"
+                    placeholder={t('auth.repeatPassword')}
                     value={formData.confirmPassword}
                     onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
                     required
-                    label="Parolni Tasdiqlang"
+                    label={t('auth.confirmPasswordLabel')}
                   />
                 )}
 
@@ -181,14 +180,14 @@ const AuthPage = ({ mode = 'login', onNavigate }) => {
                   className="auth-submit-btn"
                 >
                   {loading
-                    ? (currentMode === 'login' ? 'Kirmoqda...' : 'Ro\'yxatdan o\'tmoqda...')
-                    : (currentMode === 'login' ? 'Kirish' : 'Ro\'yxatdan O\'tish')
+                    ? (currentMode === 'login' ? t('auth.loggingIn') : t('auth.signingUp'))
+                    : (currentMode === 'login' ? t('auth.login') : t('auth.signup'))
                   }
                 </Button>
               </form>
 
               <div className="auth-divider">
-                <span>yoki</span>
+                <span>{t('auth.orContinueWith')}</span>
               </div>
 
               <Button
@@ -197,75 +196,73 @@ const AuthPage = ({ mode = 'login', onNavigate }) => {
                 onClick={handleGuestLogin}
                 className="guest-btn"
               >
-                Mehmon Sifatida Kirish
+                {t('auth.guestLogin')}
               </Button>
 
               <div className="auth-footer">
                 <p>
-                  {currentMode === 'login'
-                    ? "Hisobingiz yo'qmi? "
-                    : "Hisobingiz bormi? "
-                  }
+                  {currentMode === 'login' ? t('auth.dontHaveAccount') : t('auth.alreadyHaveAccount')}
+                  {' '}
                   <button
                     type="button"
                     onClick={() => switchMode(currentMode === 'login' ? 'signup' : 'login')}
                     className="auth-switch-btn"
                   >
-                    {currentMode === 'login' ? "Ro'yxatdan o'tish" : "Kirish"}
+                    {currentMode === 'login' ? t('auth.signup') : t('auth.login')}
                   </button>
                 </p>
               </div>
             </div>
 
             <div className="auth-benefits">
-              <h3>Nima uchun ro'yxatdan o'tish kerak?</h3>
+              <h3>{t('auth.whyRegister')}</h3>
               <div className="benefits-list">
                 <div className="benefit-item">
                   <div className="benefit-content">
-                    <h4>Progress Saqlanadi</h4>
-                    <p>Barcha natijalaringiz va statistikangiz avtomatik saqlanadi</p>
+                    <h4>{t('auth.benefit1Title')}</h4>
+                    <p>{t('auth.benefit1Desc')}</p>
                   </div>
                 </div>
 
                 <div className="benefit-item">
                   <div className="benefit-content">
-                    <h4>Global Reytinglar</h4>
-                    <p>Dunyodagi o'yinchilar bilan raqobatlashing va reytingda ko'tariling</p>
+                    <h4>{t('auth.benefit2Title')}</h4>
+                    <p>{t('auth.benefit2Desc')}</p>
                   </div>
                 </div>
 
                 <div className="benefit-item">
                   <div className="benefit-content">
-                    <h4>Batafsil Statistika</h4>
-                    <p>O'sishingizni kuzatib boring, grafiklar va tahlillar ko'ring</p>
+                    <h4>{t('auth.benefit3Title')}</h4>
+                    <p>{t('auth.benefit3Desc')}</p>
                   </div>
                 </div>
 
                 <div className="benefit-item">
                   <div className="benefit-content">
-                    <h4>Yutuqlar va Mukofotlar</h4>
-                    <p>Maxsus yutuqlarni qo'lga kiriting va rekordlar o'rnating</p>
+                    <h4>{t('auth.benefit4Title')}</h4>
+                    <p>{t('auth.benefit4Desc')}</p>
                   </div>
                 </div>
 
                 <div className="benefit-item">
                   <div className="benefit-content">
-                    <h4>Shaxsiy Profil</h4>
-                    <p>O'z profilingizni yarating va boshqa o'yinchilar bilan bo'lishing</p>
+                    <h4>{t('auth.benefit5Title')}</h4>
+                    <p>{t('auth.benefit5Desc')}</p>
                   </div>
                 </div>
 
                 <div className="benefit-item">
                   <div className="benefit-content">
-                    <h4>Qurilmalar Orasida Sinxronizatsiya</h4>
-                    <p>Har qanday qurilmadan o'z hisobingizga kiring va davom eting</p>
+                    <h4>{t('auth.benefit6Title')}</h4>
+                    <p>{t('auth.benefit6Desc')}</p>
                   </div>
                 </div>
 
                 <div className="benefit-item">
                   <div className="benefit-content">
-                    <h4>Kun Sayin Yangi O'yinlar</h4>
-                    <p>Har kuni yangi qiziqarli vazifalar va musobaqalarda ishtirok eting</p>
+                    <h4>{t('auth.benefit7Title')}</h4>
+                    <p>{t('auth.benefit7Desc')}</p>
                   </div>
                 </div>
               </div>

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { useLanguage } from '../contexts/LanguageContext'
 import Button from '../components/ui/Button'
 
 const LeaderboardPage = ({ onNavigate }) => {
   const { user } = useAuth()
+  const { t, language } = useLanguage()
   const [activeTab, setActiveTab] = useState('global')
   const [selectedGame, setSelectedGame] = useState('all')
   const [selectedDifficulty, setSelectedDifficulty] = useState('all')
@@ -12,23 +14,23 @@ const LeaderboardPage = ({ onNavigate }) => {
   const [timeFilter, setTimeFilter] = useState('all') // all, week, month
 
   const games = [
-    { id: 'all', name: 'Barcha O\'yinlar', icon: '🎮' },
-    { id: 'memory-cards', name: 'Xotira Kartalari', icon: '🃏' },
-    { id: 'number-sequence', name: 'Raqam Ketma-ketligi', icon: '🔢' },
-    { id: 'color-sequence', name: 'Rang Ketma-ketligi', icon: '🌈' }
+    { id: 'all', name: t('leaderboard.allGames'), icon: '🎮' },
+    { id: 'memory-cards', name: t('games.memoryCards'), icon: '🃏' },
+    { id: 'number-sequence', name: t('games.numberSequence'), icon: '🔢' },
+    { id: 'color-sequence', name: t('games.colorSequence'), icon: '🌈' }
   ]
 
   const difficulties = [
-    { id: 'all', name: 'Barcha Darajalar' },
-    { id: 'easy', name: 'Oson' },
-    { id: 'medium', name: 'O\'rta' },
-    { id: 'hard', name: 'Qiyin' }
+    { id: 'all', name: t('leaderboard.allDifficulties') },
+    { id: 'easy', name: t('games.easy') },
+    { id: 'medium', name: t('games.medium') },
+    { id: 'hard', name: t('games.hard') }
   ]
 
   const timeFilters = [
-    { id: 'all', name: 'Barcha vaqt' },
-    { id: 'week', name: 'Bu hafta' },
-    { id: 'month', name: 'Bu oy' }
+    { id: 'all', name: t('leaderboard.allTime') },
+    { id: 'week', name: t('leaderboard.thisWeek') },
+    { id: 'month', name: t('leaderboard.thisMonth') }
   ]
 
   useEffect(() => {
@@ -101,12 +103,19 @@ const LeaderboardPage = ({ onNavigate }) => {
   }
 
   const getMockFriendsScores = () => {
+    const friendNames = {
+      uz: ['Dostim Ali', 'Bekzod', 'Malika', 'Jasur', 'Nodira'],
+      en: ['Friend John', 'Michael', 'Sarah', 'David', 'Emma'],
+      ru: ['Друг Алексей', 'Михаил', 'Анна', 'Дмитрий', 'Ольга']
+    }
+    const names = friendNames[language] || friendNames['uz']
+
     return [
-      { id: '1', userName: 'Dostim Ali', gameType: 'memory-cards', difficulty: 'medium', score: 1890, timestamp: '2024-01-14T12:30:00Z' },
-      { id: '2', userName: 'Bekzod', gameType: 'number-sequence', difficulty: 'easy', score: 1650, timestamp: '2024-01-13T16:20:00Z' },
-      { id: '3', userName: 'Malika', gameType: 'color-sequence', difficulty: 'hard', score: 2150, timestamp: '2024-01-12T10:45:00Z' },
-      { id: '4', userName: 'Jasur', gameType: 'memory-cards', difficulty: 'easy', score: 1420, timestamp: '2024-01-11T15:30:00Z' },
-      { id: '5', userName: 'Nodira', gameType: 'number-sequence', difficulty: 'medium', score: 1780, timestamp: '2024-01-10T11:15:00Z' }
+      { id: '1', userName: names[0], gameType: 'memory-cards', difficulty: 'medium', score: 1890, timestamp: '2024-01-14T12:30:00Z' },
+      { id: '2', userName: names[1], gameType: 'number-sequence', difficulty: 'easy', score: 1650, timestamp: '2024-01-13T16:20:00Z' },
+      { id: '3', userName: names[2], gameType: 'color-sequence', difficulty: 'hard', score: 2150, timestamp: '2024-01-12T10:45:00Z' },
+      { id: '4', userName: names[3], gameType: 'memory-cards', difficulty: 'easy', score: 1420, timestamp: '2024-01-11T15:30:00Z' },
+      { id: '5', userName: names[4], gameType: 'number-sequence', difficulty: 'medium', score: 1780, timestamp: '2024-01-10T11:15:00Z' }
     ]
   }
 
@@ -138,7 +147,7 @@ const LeaderboardPage = ({ onNavigate }) => {
       case 0: return '🥇'
       case 1: return '🥈'
       case 2: return '🥉'
-      default: return `#${index + 1}`
+      default: return `${index + 1}`
     }
   }
 
@@ -147,8 +156,8 @@ const LeaderboardPage = ({ onNavigate }) => {
   return (
     <div className="page-container">
       <div className="page-header">
-        <h1>🏆 Reytinglar</h1>
-        <p>Eng yaxshi o'yinchilar bilan raqobatlashing!</p>
+        <h1>🏆 {t('leaderboard.title')}</h1>
+        <p>{t('leaderboard.subtitle')}</p>
       </div>
 
       <div className="leaderboard-controls">
@@ -159,21 +168,21 @@ const LeaderboardPage = ({ onNavigate }) => {
               onClick={() => setActiveTab('global')}
             >
               <span className="tab-icon">🌍</span>
-              <span className="tab-text">Global</span>
+              <span className="tab-text">{t('leaderboard.global')}</span>
             </button>
             <button
               className={`tab ${activeTab === 'friends' ? 'active' : ''}`}
               onClick={() => setActiveTab('friends')}
             >
               <span className="tab-icon">👥</span>
-              <span className="tab-text">Do'stlar</span>
+              <span className="tab-text">{t('leaderboard.friends')}</span>
             </button>
           </div>
         </div>
 
         <div className="filters-section">
           <div className="filter-group">
-            <label>🎮 O'yin:</label>
+            <label>🎮 {t('leaderboard.game')}:</label>
             <select
               value={selectedGame}
               onChange={(e) => setSelectedGame(e.target.value)}
@@ -188,7 +197,7 @@ const LeaderboardPage = ({ onNavigate }) => {
           </div>
 
           <div className="filter-group">
-            <label>📊 Daraja:</label>
+            <label>📊 {t('leaderboard.difficulty')}:</label>
             <select
               value={selectedDifficulty}
               onChange={(e) => setSelectedDifficulty(e.target.value)}
@@ -203,7 +212,7 @@ const LeaderboardPage = ({ onNavigate }) => {
           </div>
 
           <div className="filter-group">
-            <label>📅 Vaqt:</label>
+            <label>📅 {t('leaderboard.time')}:</label>
             <select
               value={timeFilter}
               onChange={(e) => setTimeFilter(e.target.value)}
@@ -223,19 +232,19 @@ const LeaderboardPage = ({ onNavigate }) => {
         {loading ? (
           <div className="loading-state">
             <div className="loading-spinner"></div>
-            <p>Reytinglar yuklanmoqda...</p>
+            <p>{t('leaderboard.loading')}</p>
           </div>
         ) : currentScores.length === 0 ? (
           <div className="empty-state">
             <div className="empty-icon">📭</div>
-            <h3>Natijalar Topilmadi</h3>
-            <p>Hali bu kategoriyada natijalar yo'q. Birinchi bo'ling!</p>
+            <h3>{t('leaderboard.noResults')}</h3>
+            <p>{t('leaderboard.noResultsDesc')}</p>
             <Button
               variant="primary"
               onClick={() => onNavigate('game')}
               icon="🎮"
             >
-              O'yin O'ynash
+              {t('profile.playGame')}
             </Button>
           </div>
         ) : (
@@ -278,8 +287,8 @@ const LeaderboardPage = ({ onNavigate }) => {
             {/* Full Rankings List */}
             <div className="rankings-list">
               <div className="rankings-header">
-                <h3>📊 To'liq Reyting</h3>
-                <p>{currentScores.length} ta natija</p>
+                <h3>📊 {t('leaderboard.fullRanking')}</h3>
+                <p>{currentScores.length} {t('leaderboard.results')}</p>
               </div>
 
               <div className="scores-list">
@@ -299,7 +308,7 @@ const LeaderboardPage = ({ onNavigate }) => {
                         <div className="player-info">
                           <span className="player-name">
                             {score.userName}
-                            {isCurrentUser && <span className="you-badge">(Siz)</span>}
+                            {isCurrentUser && <span className="you-badge">({t('leaderboard.you')})</span>}
                           </span>
                           <div className="player-meta">
                             <span className="game-type">
@@ -321,7 +330,7 @@ const LeaderboardPage = ({ onNavigate }) => {
 
                       <div className="score-section">
                         <span className="score-value">{score.score.toLocaleString()}</span>
-                        <span className="score-label">ball</span>
+                        <span className="score-label">{t('leaderboard.score')}</span>
                       </div>
                     </div>
                   )
@@ -335,14 +344,15 @@ const LeaderboardPage = ({ onNavigate }) => {
       {activeTab === 'friends' && (
         <div className="friends-section">
           <div className="friends-info">
-            <h3>👥 Do'stlar qo'shish</h3>
-            <p>Do'stlaringiz bilan raqobatlashing! Do'stlar qo'shish funksiyasi tez orada qo'shiladi.</p>
+            <h3>👥 {t('leaderboard.addFriends')}</h3>
+            <p>{t('leaderboard.addFriendsDesc')}</p>
             <Button
               variant="outline"
+              size="small"
               icon="👥"
               disabled
             >
-              Do'st Qo'shish
+              {t('leaderboard.addFriend')}
             </Button>
           </div>
         </div>
@@ -351,18 +361,20 @@ const LeaderboardPage = ({ onNavigate }) => {
       <div className="leaderboard-actions">
         <Button
           variant="primary"
+          size="small"
           onClick={() => onNavigate('game')}
           icon="🎮"
         >
-          O'yin O'ynash
+          {t('profile.playGame')}
         </Button>
 
         <Button
           variant="outline"
+          size="small"
           onClick={() => loadScores()}
           icon="🔄"
         >
-          Yangilash
+          {t('leaderboard.refresh')}
         </Button>
       </div>
     </div>

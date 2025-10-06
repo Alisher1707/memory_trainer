@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useTheme } from '../contexts/ThemeContext'
+import { useLanguage } from '../contexts/LanguageContext'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
 
 const SettingsPage = ({ onNavigate }) => {
   const { user, isAuthenticated, logout } = useAuth()
   const { theme, toggleTheme, soundEnabled, toggleSound } = useTheme()
+  const { language, changeLanguage, t } = useLanguage()
   const [settings, setSettings] = useState({
     vibration: true,
     animations: true,
-    language: 'uz',
     difficulty: 'easy',
     autoSave: true,
     notifications: true
@@ -83,57 +84,59 @@ const SettingsPage = ({ onNavigate }) => {
 
   const settingSections = [
     {
-      title: '🎮 O\'yin Sozlamalari',
+      title: `🎮 ${t('settings.gameSettings')}`,
       settings: [
         {
           key: 'sound',
-          label: 'Ovoz Effektlari',
-          description: 'O\'yin jarayonida ovoz effektlarini yoqish',
+          label: t('settings.soundEffects'),
+          description: t('settings.soundEffectsDesc'),
           type: 'toggle',
           value: soundEnabled,
           onChange: toggleSound
         },
         {
           key: 'vibration',
-          label: 'Tebranish',
-          description: 'Mobil qurilmalarda tebranish effektlari',
+          label: t('settings.vibration'),
+          description: t('settings.vibrationDesc'),
           type: 'toggle'
         },
         {
           key: 'animations',
-          label: 'Animatsiyalar',
-          description: 'Karta va interfeys animatsiyalari',
+          label: t('settings.animations'),
+          description: t('settings.animationsDesc'),
           type: 'toggle'
         },
         {
           key: 'difficulty',
-          label: 'Standart Daraja',
-          description: 'O\'yinlar uchun standart qiyinlik darajasi',
+          label: t('settings.defaultDifficulty'),
+          description: t('settings.defaultDifficultyDesc'),
           type: 'select',
           options: [
-            { value: 'easy', label: 'Oson' },
-            { value: 'medium', label: 'O\'rta' },
-            { value: 'hard', label: 'Qiyin' }
+            { value: 'easy', label: t('games.easy') },
+            { value: 'medium', label: t('games.medium') },
+            { value: 'hard', label: t('games.hard') }
           ]
         }
       ]
     },
     {
-      title: '🎨 Interfeys Sozlamalari',
+      title: `🎨 ${t('settings.interfaceSettings')}`,
       settings: [
         {
           key: 'theme',
-          label: 'Tungi Rejim',
-          description: 'Interfeys qorong\'u rejimini yoqish',
+          label: t('settings.darkMode'),
+          description: t('settings.darkModeDesc'),
           type: 'toggle',
           value: theme === 'dark',
           onChange: toggleTheme
         },
         {
           key: 'language',
-          label: 'Til',
-          description: 'Interfeys tili',
+          label: t('settings.language'),
+          description: t('settings.languageDesc'),
           type: 'select',
+          value: language,
+          onChange: (e) => changeLanguage(e.target.value),
           options: [
             { value: 'uz', label: 'O\'zbekcha' },
             { value: 'en', label: 'English' },
@@ -143,18 +146,18 @@ const SettingsPage = ({ onNavigate }) => {
       ]
     },
     {
-      title: '💾 Ma\'lumotlar Sozlamalari',
+      title: `💾 ${t('settings.dataSettings')}`,
       settings: [
         {
           key: 'autoSave',
-          label: 'Avtomatik Saqlash',
-          description: 'Natijalarni avtomatik serverga yuborish',
+          label: t('settings.autoSave'),
+          description: t('settings.autoSaveDesc'),
           type: 'toggle'
         },
         {
           key: 'notifications',
-          label: 'Bildirishnomalar',
-          description: 'Yangi yutuqlar va rekordlar haqida xabar',
+          label: t('settings.notifications'),
+          description: t('settings.notificationsDesc'),
           type: 'toggle'
         }
       ]
@@ -179,10 +182,13 @@ const SettingsPage = ({ onNavigate }) => {
         )
 
       case 'select':
+        const selectValue = setting.value !== undefined ? setting.value : settings[setting.key]
+        const selectOnChange = setting.onChange || ((e) => handleSettingChange(setting.key, e.target.value))
+
         return (
           <select
-            value={settings[setting.key]}
-            onChange={(e) => handleSettingChange(setting.key, e.target.value)}
+            value={selectValue}
+            onChange={selectOnChange}
             className="setting-select"
           >
             {setting.options.map(option => (
@@ -201,14 +207,14 @@ const SettingsPage = ({ onNavigate }) => {
   return (
     <div className="page-container settings-page">
       <div className="page-header">
-        <h1>⚙️ Sozlamalar</h1>
+        <h1>⚙️ {t('settings.title')}</h1>
         <Button
           variant="ghost"
           size="small"
           onClick={() => onNavigate('home')}
           icon="←"
         >
-          Orqaga
+          {t('settings.back')}
         </Button>
       </div>
 
@@ -237,14 +243,14 @@ const SettingsPage = ({ onNavigate }) => {
 
         {isAuthenticated && (
           <div className="settings-section">
-            <h2>👤 Hisob Sozlamalari</h2>
+            <h2>👤 {t('settings.accountSettings')}</h2>
 
             <div className="account-info">
               <div className="account-details">
                 <h3>{user.name}</h3>
                 {user.email && <p>{user.email}</p>}
                 <p className="join-date">
-                  Qo'shilgan: {new Date(user.createdAt).toLocaleDateString('uz-UZ')}
+                  {t('settings.joinedDate')}: {new Date(user.createdAt).toLocaleDateString()}
                 </p>
               </div>
             </div>
@@ -256,7 +262,7 @@ const SettingsPage = ({ onNavigate }) => {
                 onClick={handleExportData}
                 icon="📥"
               >
-                Ma'lumotlarni Yuklab Olish
+                {t('settings.exportData')}
               </Button>
 
               <Button
@@ -265,7 +271,7 @@ const SettingsPage = ({ onNavigate }) => {
                 onClick={() => setShowLogoutModal(true)}
                 icon="🚪"
               >
-                Chiqish
+                {t('modal.logout')}
               </Button>
 
               <Button
@@ -274,26 +280,26 @@ const SettingsPage = ({ onNavigate }) => {
                 onClick={() => setShowDeleteModal(true)}
                 icon="🗑️"
               >
-                Hisobni O'chirish
+                {t('settings.deleteAccount')}
               </Button>
             </div>
           </div>
         )}
 
         <div className="settings-section">
-          <h2>ℹ️ Ilovaa Haqida</h2>
+          <h2>ℹ️ {t('settings.appInfo')}</h2>
 
           <div className="app-info">
             <div className="info-item">
-              <span className="info-label">Versiya:</span>
+              <span className="info-label">{t('settings.version')}:</span>
               <span className="info-value">1.0.0</span>
             </div>
             <div className="info-item">
-              <span className="info-label">Yaratilgan:</span>
+              <span className="info-label">{t('settings.created')}:</span>
               <span className="info-value">2024</span>
             </div>
             <div className="info-item">
-              <span className="info-label">Platformalar:</span>
+              <span className="info-label">{t('settings.platforms')}:</span>
               <span className="info-value">Web, Mobile</span>
             </div>
           </div>
@@ -305,25 +311,25 @@ const SettingsPage = ({ onNavigate }) => {
               onClick={() => window.open('https://github.com', '_blank')}
               icon="💻"
             >
-              GitHub
+              {t('settings.github')}
             </Button>
 
             <Button
               variant="outline"
               size="small"
-              onClick={() => alert('Yordam sahifasi tez orada qo\'shiladi')}
+              onClick={() => alert(t('settings.helpComingSoon'))}
               icon="❓"
             >
-              Yordam
+              {t('settings.help')}
             </Button>
 
             <Button
               variant="outline"
               size="small"
-              onClick={() => alert('Maxfiylik siyosati tez orada qo\'shiladi')}
+              onClick={() => alert(t('settings.privacyComingSoon'))}
               icon="🔒"
             >
-              Maxfiylik
+              {t('settings.privacy')}
             </Button>
           </div>
         </div>
@@ -333,26 +339,26 @@ const SettingsPage = ({ onNavigate }) => {
       <Modal
         isOpen={showLogoutModal}
         onClose={() => setShowLogoutModal(false)}
-        title="Tizimdan chiqish"
+        title={t('modal.logout')}
         size="small"
       >
         <div className="modal-content">
-          <p>Haqiqatan ham tizimdan chiqishni xohlaysizmi?</p>
-          <p className="modal-hint">Keyinroq qaytadan kirishingiz mumkin.</p>
+          <p>{t('modal.logoutConfirm')}</p>
+          <p className="modal-hint">{t('modal.logoutHint')}</p>
 
           <div className="modal-actions">
             <Button
               variant="outline"
               onClick={() => setShowLogoutModal(false)}
             >
-              Bekor qilish
+              {t('modal.cancel')}
             </Button>
             <Button
               variant="primary"
               onClick={handleLogout}
               icon="🚪"
             >
-              Chiqish
+              {t('modal.logout')}
             </Button>
           </div>
         </div>
@@ -362,18 +368,18 @@ const SettingsPage = ({ onNavigate }) => {
       <Modal
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
-        title="Hisobni o'chirish"
+        title={t('modal.deleteAccountTitle')}
         size="small"
       >
         <div className="modal-content">
           <div className="warning-content">
             <div className="warning-icon">⚠️</div>
-            <h3>Diqqat!</h3>
-            <p>Bu amal qaytarib bo'lmaydi. Barcha ma'lumotlaringiz o'chiriladi:</p>
+            <h3>{t('modal.deleteAccountWarning')}</h3>
+            <p>{t('modal.deleteAccountMessage')}</p>
             <ul>
-              <li>Barcha o'yin natijalaringiz</li>
-              <li>Statistikangiz va yutuqlaringiz</li>
-              <li>Shaxsiy ma'lumotlaringiz</li>
+              <li>{t('modal.deleteAccountItems.0')}</li>
+              <li>{t('modal.deleteAccountItems.1')}</li>
+              <li>{t('modal.deleteAccountItems.2')}</li>
             </ul>
           </div>
 
@@ -382,14 +388,14 @@ const SettingsPage = ({ onNavigate }) => {
               variant="outline"
               onClick={() => setShowDeleteModal(false)}
             >
-              Bekor qilish
+              {t('modal.cancel')}
             </Button>
             <Button
               variant="danger"
               onClick={handleDeleteAccount}
               icon="🗑️"
             >
-              Ha, O'chirish
+              {t('modal.yesDelete')}
             </Button>
           </div>
         </div>

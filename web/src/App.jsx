@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { AuthProvider } from './contexts/AuthContext'
 import { ThemeProvider } from './contexts/ThemeContext'
+import { LanguageProvider } from './contexts/LanguageContext'
 
 // Layout components
 import Navbar from './components/layout/Navbar'
@@ -91,26 +92,28 @@ function App() {
   const shouldShowFooter = ['home', 'leaderboard', 'profile'].includes(currentPage)
 
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <div className="app">
-          {shouldShowNavbar && (
-            <Navbar
-              currentPage={currentPage}
-              onNavigate={handleNavigate}
-            />
-          )}
+    <LanguageProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <div className="app">
+            {shouldShowNavbar && (
+              <Navbar
+                currentPage={currentPage}
+                onNavigate={handleNavigate}
+              />
+            )}
 
-          <main className={`main-content ${!shouldShowNavbar ? 'full-screen' : ''}`}>
-            {renderCurrentPage()}
-          </main>
+            <main className={`main-content ${!shouldShowNavbar ? 'full-screen' : ''}`}>
+              {renderCurrentPage()}
+            </main>
 
-          {shouldShowFooter && <Footer />}
+            {shouldShowFooter && <Footer />}
 
-          {/* Global loading states, notifications, etc. could go here */}
-        </div>
-      </AuthProvider>
-    </ThemeProvider>
+            {/* Global loading states, notifications, etc. could go here */}
+          </div>
+        </AuthProvider>
+      </ThemeProvider>
+    </LanguageProvider>
   )
 }
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { useLanguage } from '../contexts/LanguageContext'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
 import Login from '../components/Auth/Login'
@@ -7,6 +8,7 @@ import Signup from '../components/Auth/Signup'
 
 const ProfilePage = ({ onNavigate }) => {
   const { user, isAuthenticated, logout, isGuest } = useAuth()
+  const { t, language } = useLanguage()
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [authMode, setAuthMode] = useState('login')
 
@@ -16,8 +18,8 @@ const ProfilePage = ({ onNavigate }) => {
         <div className="auth-required">
           <div className="auth-card">
             <div className="auth-icon">🔐</div>
-            <h2>Kirish Talab Qilinadi</h2>
-            <p>Profilingizni ko'rish va statistikalarni saqlash uchun tizimga kiring.</p>
+            <h2>{t('profile.loginRequired')}</h2>
+            <p>{t('profile.loginRequiredDesc')}</p>
 
             <div className="auth-actions">
               <Button
@@ -29,7 +31,7 @@ const ProfilePage = ({ onNavigate }) => {
                 }}
                 icon="🚀"
               >
-                Kirish
+                {t('auth.login')}
               </Button>
 
               <Button
@@ -41,7 +43,7 @@ const ProfilePage = ({ onNavigate }) => {
                 }}
                 icon="📝"
               >
-                Ro'yxatdan O'tish
+                {t('auth.signup')}
               </Button>
             </div>
 
@@ -50,7 +52,7 @@ const ProfilePage = ({ onNavigate }) => {
               onClick={() => onNavigate('home')}
               icon="🏠"
             >
-              Bosh sahifaga qaytish
+              {t('profile.backToHome')}
             </Button>
           </div>
         </div>
@@ -78,12 +80,12 @@ const ProfilePage = ({ onNavigate }) => {
 
   const getAchievementInfo = (achievementId) => {
     const achievements = {
-      first_game: { name: 'Birinchi O\'yin', icon: '🎮', description: 'Birinchi o\'yinni o\'ynadingiz!' },
-      veteran: { name: 'Faxriy', icon: '🏆', description: '10 ta o\'yin o\'ynadingiz!' },
-      high_scorer: { name: 'Yuqori Ball', icon: '⭐', description: '1500+ ball to\'pladingiz!' },
-      difficulty_master: { name: 'Qiyinchilik Ustasi', icon: '💪', description: 'Qiyin darajada o\'ynadingiz!' }
+      first_game: { name: t('profile.firstGame'), icon: '🎮', description: t('profile.firstGameDesc') },
+      veteran: { name: t('profile.veteran'), icon: '🏆', description: t('profile.veteranDesc') },
+      high_scorer: { name: t('profile.highScorer'), icon: '⭐', description: t('profile.highScorerDesc') },
+      difficulty_master: { name: t('profile.difficultyMaster'), icon: '💪', description: t('profile.difficultyMasterDesc') }
     }
-    return achievements[achievementId] || { name: achievementId, icon: '🏅', description: 'Maxsus mukofot' }
+    return achievements[achievementId] || { name: achievementId, icon: '🏅', description: t('profile.specialReward') }
   }
 
   const getRecentGamesChart = () => {
@@ -91,9 +93,18 @@ const ProfilePage = ({ onNavigate }) => {
     const last7Days = []
     const today = new Date()
 
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date(today)
-      date.setDate(date.getDate() - i)
+    // Hozirgi haftaning Dushanba sanasini topish
+    const currentDay = today.getDay() // 0 = Yakshanba, 1 = Dushanba, ...
+    const daysFromMonday = currentDay === 0 ? 6 : currentDay - 1 // Dushanba dan bugunga qadar kunlar
+
+    const monday = new Date(today)
+    monday.setDate(today.getDate() - daysFromMonday)
+    monday.setHours(0, 0, 0, 0)
+
+    // Dushanba dan boshlab 7 kun
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(monday)
+      date.setDate(monday.getDate() + i)
       const dateStr = date.toDateString()
 
       const dayGames = recentGames.filter(game => game.date === dateStr)
@@ -113,17 +124,30 @@ const ProfilePage = ({ onNavigate }) => {
   const chartData = getRecentGamesChart()
   const maxScore = Math.max(...chartData.map(d => d.totalScore), 1)
 
+  const getWeekdayName = (date) => {
+    let dayIndex = new Date(date).getDay()
+    // Haftani Dushanba dan boshlash uchun: 0 (Yakshanba) -> 6, 1 (Dushanba) -> 0
+    dayIndex = dayIndex === 0 ? 6 : dayIndex - 1
+
+    const weekdaysMonFirst = {
+      uz: ['Dush', 'Sesh', 'Chor', 'Pay', 'Jum', 'Shan', 'Yak'],
+      en: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      ru: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
+    }
+    return weekdaysMonFirst[language]?.[dayIndex] || weekdaysMonFirst['en'][dayIndex]
+  }
+
   return (
     <div className="page-container">
       <div className="page-header">
-        <h1>👤 Profil</h1>
+        <h1>👤 {t('profile.title')}</h1>
         <Button
           variant="outline"
           size="small"
           onClick={logout}
           icon="🚪"
         >
-          Chiqish
+          {t('profile.logout')}
         </Button>
       </div>
 
@@ -134,10 +158,10 @@ const ProfilePage = ({ onNavigate }) => {
               {isGuest ? '👤' : '👨‍💻'}
             </div>
             <div className="user-details">
-              <h2 className={isGuest ? 'guest-name' : ''}>{isGuest ? 'Mehmon' : user.name}</h2>
+              <h2 className={isGuest ? 'guest-name' : ''}>{isGuest ? t('profile.guest') : user.name}</h2>
               {user.email && <p className="user-email">{user.email}</p>}
               <p className={`user-joined ${isGuest ? 'guest-mode' : ''}`}>
-                {isGuest ? 'Mehmon rejimi' : `Qo'shilgan: ${new Date(user.createdAt).toLocaleDateString('uz-UZ')}`}
+                {isGuest ? t('profile.guestMode') : `${t('profile.joined')}: ${new Date(user.createdAt).toLocaleDateString()}`}
               </p>
             </div>
           </div>
@@ -147,7 +171,7 @@ const ProfilePage = ({ onNavigate }) => {
           <div className="stat-card">
             <div className="stat-icon">🎮</div>
             <div className="stat-content">
-              <h3>O'yinlar Soni</h3>
+              <h3>{t('profile.gamesCount')}</h3>
               <p className="stat-number">{user.stats.gamesPlayed}</p>
             </div>
           </div>
@@ -155,7 +179,7 @@ const ProfilePage = ({ onNavigate }) => {
           <div className="stat-card">
             <div className="stat-icon">⭐</div>
             <div className="stat-content">
-              <h3>Jami Ball</h3>
+              <h3>{t('profile.totalScore')}</h3>
               <p className="stat-number">{user.stats.totalScore.toLocaleString()}</p>
             </div>
           </div>
@@ -163,7 +187,7 @@ const ProfilePage = ({ onNavigate }) => {
           <div className="stat-card">
             <div className="stat-icon">📈</div>
             <div className="stat-content">
-              <h3>O'rtacha Ball</h3>
+              <h3>{t('profile.avgScore')}</h3>
               <p className="stat-number">
                 {user.stats.gamesPlayed > 0 ? Math.round(user.stats.totalScore / user.stats.gamesPlayed) : 0}
               </p>
@@ -173,27 +197,27 @@ const ProfilePage = ({ onNavigate }) => {
           <div className="stat-card">
             <div className="stat-icon">🏆</div>
             <div className="stat-content">
-              <h3>Yutuqlar</h3>
+              <h3>{t('profile.achievementsCount')}</h3>
               <p className="stat-number">{user.stats.achievements?.length || 0}</p>
             </div>
           </div>
         </div>
 
         <div className="best-scores">
-          <h3>🏆 Eng Yaxshi Natijalar</h3>
+          <h3>🏆 {t('profile.bestResults')}</h3>
           {Object.keys(user.stats.bestScores || {}).length > 0 ? (
             <div className="scores-grid">
               {Object.entries(user.stats.bestScores || {}).map(([gameKey, score]) => {
                 const [gameType, difficulty] = gameKey.split('_')
                 const gameNames = {
-                  'memory-cards': 'Xotira Kartalari',
-                  'number-sequence': 'Raqam Ketma-ketligi',
-                  'color-sequence': 'Rang Ketma-ketligi'
+                  'memory-cards': t('games.memoryCards'),
+                  'number-sequence': t('games.numberSequence'),
+                  'color-sequence': t('games.colorSequence')
                 }
                 const diffNames = {
-                  'easy': 'Oson',
-                  'medium': 'O\'rta',
-                  'hard': 'Qiyin'
+                  'easy': t('games.easy'),
+                  'medium': t('games.medium'),
+                  'hard': t('games.hard')
                 }
 
                 return (
@@ -215,21 +239,21 @@ const ProfilePage = ({ onNavigate }) => {
             </div>
           ) : (
             <div className="no-scores">
-              <p>Hali natijalar yo'q. Birinchi o'yiningizdna keyin bu yerda ko'rinadi.</p>
+              <p>{t('profile.noResults')}</p>
               <Button
                 variant="primary"
                 size="small"
                 onClick={() => onNavigate('game')}
                 icon="🎮"
               >
-                O'yin O'ynash
+                {t('profile.playGame')}
               </Button>
             </div>
           )}
         </div>
 
         <div className="performance-chart">
-          <h3>📊 Haftalik Statistika</h3>
+          <h3>📊 {t('profile.weeklyStats')}</h3>
           <div className="chart-container">
             <div className="chart-bars">
               {chartData.map((day, index) => (
@@ -243,20 +267,20 @@ const ProfilePage = ({ onNavigate }) => {
                     title={`${day.date}: ${day.games} o'yin, ${day.totalScore} ball`}
                   />
                   <span className="chart-label">
-                    {new Date(day.date).toLocaleDateString('uz-UZ', { weekday: 'short' })}
+                    {getWeekdayName(day.date)}
                   </span>
                 </div>
               ))}
             </div>
             <div className="chart-info">
-              <p>So'nggi 7 kunlik faoliyat</p>
+              <p>{t('profile.last7Days')}</p>
             </div>
           </div>
         </div>
 
         {user.stats.achievements && user.stats.achievements.length > 0 && (
           <div className="achievements">
-            <h3>🏅 Yutuqlar</h3>
+            <h3>🏅 {t('profile.achievementsTitle')}</h3>
             <div className="achievements-grid">
               {user.stats.achievements.map((achievementId, index) => {
                 const achievement = getAchievementInfo(achievementId)
@@ -281,7 +305,7 @@ const ProfilePage = ({ onNavigate }) => {
             onClick={() => onNavigate('game')}
             icon="🎮"
           >
-            O'yin O'ynash
+            {t('profile.playGame')}
           </Button>
 
           <Button
@@ -290,7 +314,7 @@ const ProfilePage = ({ onNavigate }) => {
             onClick={() => onNavigate('leaderboard')}
             icon="🏆"
           >
-            Reytinglar
+            {t('profile.ratings')}
           </Button>
 
           <Button
@@ -299,7 +323,7 @@ const ProfilePage = ({ onNavigate }) => {
             onClick={() => onNavigate('settings')}
             icon="⚙️"
           >
-            Sozlamalar
+            {t('nav.settings')}
           </Button>
         </div>
       </div>

@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
+import { useLanguage } from '../../contexts/LanguageContext'
 import Button from '../ui/Button'
 
 const Navbar = ({ currentPage, onNavigate }) => {
   const { user, isAuthenticated, logout } = useAuth()
+  const { t } = useLanguage()
   const [showUserMenu, setShowUserMenu] = useState(false)
 
   const handleUserMenuToggle = () => {
@@ -58,7 +60,7 @@ const Navbar = ({ currentPage, onNavigate }) => {
                     }}
                   >
                     <span>👤</span>
-                    Profil
+                    {t('nav.profile')}
                   </button>
 
                   <button
@@ -69,7 +71,7 @@ const Navbar = ({ currentPage, onNavigate }) => {
                     }}
                   >
                     <span>⚙️</span>
-                    Sozlamalar
+                    {t('nav.settings')}
                   </button>
 
                   <div className="dropdown-divider" />
@@ -79,7 +81,7 @@ const Navbar = ({ currentPage, onNavigate }) => {
                     onClick={handleLogout}
                   >
                     <span>🚪</span>
-                    Chiqish
+                    {t('profile.logout')}
                   </button>
                 </div>
               )}
@@ -91,7 +93,7 @@ const Navbar = ({ currentPage, onNavigate }) => {
                 size="small"
                 onClick={() => onNavigate('auth')}
               >
-                Kirish
+                {t('nav.login')}
               </Button>
             </div>
           )}

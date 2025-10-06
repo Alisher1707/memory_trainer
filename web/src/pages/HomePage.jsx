@@ -1,38 +1,40 @@
 import React from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { useLanguage } from '../contexts/LanguageContext'
 import Button from '../components/ui/Button'
 
 const HomePage = ({ onNavigate }) => {
   const { user, isAuthenticated } = useAuth()
+  const { t } = useLanguage()
 
   const games = [
     {
       id: 'memory-cards',
-      title: 'Xotira Kartalari',
-      description: 'Kartalarni aylantiring va juftlarini toping',
+      title: t('home.memoryCardsTitle'),
+      description: t('home.memoryCardsDesc'),
       icon: '🃏',
-      difficulty: 'Boshlang\'ich',
-      duration: '5-10 daqiqa',
+      difficulty: t('home.beginner'),
+      duration: t('home.duration1'),
       bgColor: '#ff6b6b',
       players: '1.2K+'
     },
     {
       id: 'number-sequence',
-      title: 'Raqam Ketma-ketligi',
-      description: 'Raqamlar ketma-ketligini eslab qoling',
+      title: t('home.numberSequenceTitle'),
+      description: t('home.numberSequenceDesc'),
       icon: '🔢',
-      difficulty: 'O\'rta',
-      duration: '3-7 daqiqa',
+      difficulty: t('home.intermediate'),
+      duration: t('home.duration2'),
       bgColor: '#4ecdc4',
       players: '890+'
     },
     {
       id: 'color-sequence',
-      title: 'Rang Ketma-ketligi',
-      description: 'Ranglar tartibini takrorlang',
+      title: t('home.colorSequenceTitle'),
+      description: t('home.colorSequenceDesc'),
       icon: '🌈',
-      difficulty: 'Murakkab',
-      duration: '5-12 daqiqa',
+      difficulty: t('home.advanced'),
+      duration: t('home.duration3'),
       bgColor: '#ffe66d',
       players: '650+'
     }
@@ -59,54 +61,54 @@ const HomePage = ({ onNavigate }) => {
             <span className="gradient-text">Memory Trainer</span>
           </h1>
           <p className="hero-subtitle">
-            Miyangizni kuchaytirishning eng qiziqarli yo'li
+            {t('home.subtitle')}
           </p>
           <div className="hero-stats-compact">
             <div className="stat-compact">
               <span className="stat-number-compact">1,000+</span>
-              <span className="stat-label-compact">Foydalanuvchi</span>
+              <span className="stat-label-compact">{t('home.users')}</span>
             </div>
             <div className="stat-compact">
               <span className="stat-number-compact">50,000+</span>
-              <span className="stat-label-compact">O'yin o'ynaldi</span>
+              <span className="stat-label-compact">{t('home.gamesPlayed')}</span>
             </div>
             <div className="stat-compact">
               <span className="stat-number-compact">95%</span>
-              <span className="stat-label-compact">Qoniqish darajasi</span>
+              <span className="stat-label-compact">{t('home.satisfaction')}</span>
             </div>
           </div>
         </div>
       </div>
 
       <div className="section-header-main">
-        <h2>O'yin Tanlang</h2>
-        <p>Har bir o'yin turli ko'nikmalarni rivojlantiradi</p>
+        <h2>{t('home.selectGame')}</h2>
+        <p>{t('home.selectGameDesc')}</p>
       </div>
 
       {isAuthenticated && user && (
         <div className="welcome-section">
           <div className="welcome-card">
             <div className="welcome-header">
-              <h3>Xush kelibsiz, {user.name}!</h3>
+              <h3>{t('home.welcome')}, {user.name}!</h3>
               <Button
                 variant="ghost"
                 size="small"
                 onClick={() => onNavigate('profile')}
               >
-                Profil
+                {t('home.profile')}
               </Button>
             </div>
             <div className="quick-stats">
               <div className="quick-stat">
-                <span className="stat-text">{user.stats.gamesPlayed} o'yin</span>
+                <span className="stat-text">{user.stats.gamesPlayed} {t('home.games')}</span>
               </div>
               <div className="quick-stat">
-                <span className="stat-text">{user.stats.totalScore} ball</span>
+                <span className="stat-text">{user.stats.totalScore} {t('home.score')}</span>
               </div>
               <div className="quick-stat">
                 <span className="stat-text">
                   {user.stats.gamesPlayed > 0 ?
-                    Math.round(user.stats.totalScore / user.stats.gamesPlayed) : 0} o'rtacha
+                    Math.round(user.stats.totalScore / user.stats.gamesPlayed) : 0} {t('home.avgScore')}
                 </span>
               </div>
             </div>
@@ -127,7 +129,7 @@ const HomePage = ({ onNavigate }) => {
               <div className="game-card-header">
                 <div className="game-popularity">
                   <span className="players-count">{game.players}</span>
-                  <span className="players-label">o'yinchi</span>
+                  <span className="players-label">{t('home.players')}</span>
                 </div>
               </div>
 
@@ -149,7 +151,7 @@ const HomePage = ({ onNavigate }) => {
                   size="medium"
                   className="game-play-button"
                 >
-                  O'ynash
+                  {t('home.play')}
                 </Button>
               </div>
 
@@ -161,46 +163,46 @@ const HomePage = ({ onNavigate }) => {
 
       <div className="features-section">
         <div className="section-header">
-          <h2>Nega Memory Trainer?</h2>
+          <h2>{t('home.whyMemoryTrainer')}</h2>
         </div>
 
         <div className="features-grid">
           <div className="feature-card">
-            <h3>3 Daraja Qiyinligi</h3>
-            <p>Boshlang'ichdan professionalga qadar o'z darajangizni tanlang</p>
+            <h3>{t('home.feature1Title')}</h3>
+            <p>{t('home.feature1Desc')}</p>
           </div>
 
           <div className="feature-card">
-            <h3>Batafsil Statistika</h3>
-            <p>O'sishingizni kuzatib boring va grafiklar orqali tahlil qiling</p>
+            <h3>{t('home.feature2Title')}</h3>
+            <p>{t('home.feature2Desc')}</p>
           </div>
 
           <div className="feature-card">
-            <h3>Global Raqobat</h3>
-            <p>Dunyodagi o'yinchilar bilan raqobatlashing va reytingda ko'tariling</p>
+            <h3>{t('home.feature3Title')}</h3>
+            <p>{t('home.feature3Desc')}</p>
           </div>
 
           <div className="feature-card">
-            <h3>Yutuqlar Tizimi</h3>
-            <p>Maxsus yutuqlarni qo'lga kiriting va rekordlar o'rnating</p>
+            <h3>{t('home.feature4Title')}</h3>
+            <p>{t('home.feature4Desc')}</p>
           </div>
 
           <div className="feature-card">
-            <h3>Har Yerda O'ynang</h3>
-            <p>Mobil va desktop qurilmalarda mukammal ishlaydi</p>
+            <h3>{t('home.feature5Title')}</h3>
+            <p>{t('home.feature5Desc')}</p>
           </div>
 
           <div className="feature-card">
-            <h3>Progress Saqlanadi</h3>
-            <p>Barcha natijalaringiz va statistikangiz avtomatik saqlanadi</p>
+            <h3>{t('home.feature6Title')}</h3>
+            <p>{t('home.feature6Desc')}</p>
           </div>
         </div>
       </div>
 
       <div className="cta-section">
         <div className="cta-card">
-          <h2>Hoziroq Boshlang!</h2>
-          <p>Xotirangizni rivojlantirish uchun birinchi qadamni qo'ying</p>
+          <h2>{t('home.ctaTitle')}</h2>
+          <p>{t('home.ctaDesc')}</p>
 
           {!isAuthenticated ? (
             <div className="cta-actions">
@@ -209,14 +211,14 @@ const HomePage = ({ onNavigate }) => {
                 size="large"
                 onClick={() => onNavigate('auth')}
               >
-                Ro'yxatdan O'tish
+                {t('auth.signup')}
               </Button>
               <Button
                 variant="outline"
                 size="large"
                 onClick={() => onNavigate('game')}
               >
-                Mehmon Sifatida
+                {t('auth.playAsGuest')}
               </Button>
             </div>
           ) : (
@@ -225,7 +227,7 @@ const HomePage = ({ onNavigate }) => {
               size="large"
               onClick={() => onNavigate('game')}
             >
-              O'yinni Boshlash
+              {t('home.startGame')}
             </Button>
           )}
         </div>
@@ -233,16 +235,16 @@ const HomePage = ({ onNavigate }) => {
 
       <div className="tips-section">
         <div className="tips-card">
-          <h3>Bilasizmi?</h3>
+          <h3>{t('home.didYouKnow')}</h3>
           <div className="tips-content">
             <div className="tip-item">
-              <p>Har kuni 10-15 daqiqa xotira mashqlari miyangizni 40% gacha yaxshilaydi!</p>
+              <p>{t('home.tip1')}</p>
             </div>
             <div className="tip-item">
-              <p>Turli xil o'yinlar miyangizning turli qismlarini faollashtiradi.</p>
+              <p>{t('home.tip2')}</p>
             </div>
             <div className="tip-item">
-              <p>Doimiy mashq qilish xotira sig'imini sezilarli darajada oshiradi.</p>
+              <p>{t('home.tip3')}</p>
             </div>
           </div>
         </div>
