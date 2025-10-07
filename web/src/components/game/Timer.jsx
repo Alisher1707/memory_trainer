@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const Timer = ({
   isRunning = false,
@@ -10,6 +11,7 @@ const Timer = ({
   showWarning = true,
   warningThreshold = 30
 }) => {
+  const { t } = useLanguage()
   const [time, setTime] = useState(initialTime)
   const [isWarning, setIsWarning] = useState(false)
 
@@ -112,7 +114,7 @@ const Timer = ({
         {timeLimit && (
           <div className="timer-info">
             <span className="timer-label">
-              {time > 0 ? 'Qolgan vaqt' : 'Vaqt tugadi!'}
+              {time > 0 ? t('game.timeRemaining') : t('game.timeUp')}
             </span>
           </div>
         )}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { useLanguage } from '../contexts/LanguageContext'
 
 const GameResultModal = ({
   isOpen,
@@ -9,6 +10,7 @@ const GameResultModal = ({
   onMainMenu
 }) => {
   const { user, isAuthenticated, updateUserStats } = useAuth()
+  const { t } = useLanguage()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [isNewBest, setIsNewBest] = useState(false)
@@ -97,11 +99,11 @@ const GameResultModal = ({
   }
 
   const getScoreRating = (score) => {
-    if (score >= 2000) return { text: 'Ajoyib!', emoji: '🔥', color: '#ff6b6b' }
-    if (score >= 1500) return { text: 'Yaxshi!', emoji: '🌟', color: '#feca57' }
-    if (score >= 1000) return { text: 'Zo\'r!', emoji: '👍', color: '#48dbfb' }
-    if (score >= 500) return { text: 'Yaxshi!', emoji: '😊', color: '#1dd1a1' }
-    return { text: 'Mashq qiling!', emoji: '💪', color: '#a55eea' }
+    if (score >= 2000) return { text: t('game.excellent'), emoji: '🔥', color: '#ff6b6b' }
+    if (score >= 1500) return { text: t('game.great'), emoji: '🌟', color: '#feca57' }
+    if (score >= 1000) return { text: t('game.good'), emoji: '👍', color: '#48dbfb' }
+    if (score >= 500) return { text: t('game.nice'), emoji: '😊', color: '#1dd1a1' }
+    return { text: t('game.keepPracticing'), emoji: '💪', color: '#a55eea' }
   }
 
   const getGameIcon = (gameType) => {
@@ -115,9 +117,9 @@ const GameResultModal = ({
 
   const getDifficultyLabel = (difficulty) => {
     switch (difficulty) {
-      case 'easy': return 'Oson'
-      case 'medium': return 'O\'rta'
-      case 'hard': return 'Qiyin'
+      case 'easy': return t('games.easy')
+      case 'medium': return t('games.medium')
+      case 'hard': return t('games.hard')
       default: return difficulty
     }
   }
@@ -133,8 +135,8 @@ const GameResultModal = ({
           <div className="game-info">
             <span className="game-icon">{getGameIcon(gameResult.gameType)}</span>
             <div className="game-details">
-              <h3>O'yin Tugadi!</h3>
-              <p>{getDifficultyLabel(gameResult.difficulty)} daraja</p>
+              <h3>{t('game.gameEnded')}</h3>
+              <p>{getDifficultyLabel(gameResult.difficulty)} {t('games.level')}</p>
             </div>
           </div>
           <button className="close-button" onClick={onClose}>×</button>
@@ -145,7 +147,7 @@ const GameResultModal = ({
             <div className="score-circle" style={{ borderColor: rating.color }}>
               <span className="score-emoji">{rating.emoji}</span>
               <span className="score-value">{gameResult.score}</span>
-              <span className="score-label">Ball</span>
+              <span className="score-label">{t('game.score')}</span>
             </div>
           </div>
 
@@ -155,7 +157,7 @@ const GameResultModal = ({
 
           {isNewBest && (
             <div className="new-best-badge">
-              🏆 Yangi rekord!
+              🏆 {t('game.newRecord')}
             </div>
           )}
         </div>
@@ -163,7 +165,7 @@ const GameResultModal = ({
         <div className="game-stats">
           <div className="stat-item">
             <span className="stat-icon">⏱️</span>
-            <span className="stat-label">Vaqt</span>
+            <span className="stat-label">{t('game.time')}</span>
             <span className="stat-value">
               {Math.floor(gameResult.timeSpent / 60)}:{(gameResult.timeSpent % 60).toString().padStart(2, '0')}
             </span>
@@ -171,14 +173,14 @@ const GameResultModal = ({
 
           <div className="stat-item">
             <span className="stat-icon">🎯</span>
-            <span className="stat-label">Harakatlar</span>
+            <span className="stat-label">{t('game.actions')}</span>
             <span className="stat-value">{gameResult.moves}</span>
           </div>
 
           {user && (
             <div className="stat-item">
               <span className="stat-icon">📊</span>
-              <span className="stat-label">Eng yaxshi</span>
+              <span className="stat-label">{t('game.best')}</span>
               <span className="stat-value">
                 {user.stats.bestScores[`${gameResult.gameType}_${gameResult.difficulty}`] || 0}
               </span>
@@ -191,43 +193,43 @@ const GameResultModal = ({
             {isSubmitting ? (
               <div className="submitting">
                 <div className="spinner"></div>
-                <span>Natija yuklanmoqda...</span>
+                <span>{t('game.submitting')}</span>
               </div>
             ) : submitted ? (
               <div className="submitted">
                 <span className="success-icon">✅</span>
-                <span>Natija muvaffaqiyatli saqlandi!</span>
+                <span>{t('game.savedSuccessfully')}</span>
               </div>
             ) : (
               <button className="submit-button" onClick={handleManualSubmit}>
-                💾 Serverga Saqlash
+                💾 {t('game.saveToServer')}
               </button>
             )}
           </div>
         ) : (
           <div className="auth-prompt">
-            <p>🔐 Natijalarni saqlash uchun tizimga kiring</p>
-            <small>Mehmon rejimida natijalar saqlanmaydi</small>
+            <p>🔐 {t('game.loginToSave')}</p>
+            <small>{t('game.guestModeWarning')}</small>
           </div>
         )}
 
         <div className="action-buttons">
           <button className="play-again-button" onClick={onPlayAgain}>
-            🔄 Yana O'ynash
+            🔄 {t('game.playAgainButton')}
           </button>
 
           <button className="main-menu-button" onClick={onMainMenu}>
-            🏠 Bosh Sahifa
+            🏠 {t('game.mainMenuButton')}
           </button>
         </div>
 
         <div className="motivational-message">
           {gameResult.score >= 1500 ? (
-            <p>🎉 Zo'r natija! Siz haqiqiy xotira ustasi ekansiz!</p>
+            <p>🎉 {t('game.motivational1')}</p>
           ) : gameResult.score >= 1000 ? (
-            <p>💪 Yaxshi! Biroz ko'proq mashq qiling!</p>
+            <p>💪 {t('game.motivational2')}</p>
           ) : (
-            <p>🚀 Doimiy mashq qilish orqali yaxshiroq natijalar qo'lga kiritishingiz mumkin!</p>
+            <p>🚀 {t('game.motivational3')}</p>
           )}
         </div>
       </div>

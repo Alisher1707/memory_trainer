@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { useLanguage } from '../contexts/LanguageContext'
 import GameBoard from '../components/game/GameBoard'
 import LevelSelector from '../components/game/LevelSelector'
 import Button from '../components/ui/Button'
@@ -11,6 +12,7 @@ const GamePage = ({
   onNavigate
 }) => {
   const { isAuthenticated } = useAuth()
+  const { t } = useLanguage()
   const [selectedGame, setSelectedGame] = useState(gameType)
   const [selectedLevel, setSelectedLevel] = useState(level || 'easy')
   const [gameState, setGameState] = useState('selectGame') // selectGame, selectLevel, playing, paused, results
@@ -20,27 +22,27 @@ const GamePage = ({
   const games = [
     {
       id: 'memory-cards',
-      title: 'Xotira Kartalari',
-      description: 'Kartalarni aylantiring va juftlarini toping',
+      title: t('games.memoryCardsTitle'),
+      description: t('games.memoryCardsDesc'),
       icon: '🃏',
       bgColor: '#ff6b6b',
-      features: ['Vizual xotira', 'Diqqat jamlash', 'Tezlik']
+      features: [t('games.feature3'), t('games.feature1'), t('games.feature2')]
     },
     {
       id: 'number-sequence',
-      title: 'Raqam Ketma-ketligi',
-      description: 'Raqamlar ketma-ketligini eslab qoling',
+      title: t('games.numberSequenceTitle'),
+      description: t('games.numberSequenceDesc'),
       icon: '🔢',
       bgColor: '#4ecdc4',
-      features: ['Raqamli xotira', 'Ketma-ketlik', 'Konsentratsiya']
+      features: [t('games.feature6'), t('games.feature4'), t('games.feature5')]
     },
     {
       id: 'color-sequence',
-      title: 'Rang Ketma-ketligi',
-      description: 'Ranglar tartibini takrorlang',
+      title: t('games.colorSequenceTitle'),
+      description: t('games.colorSequenceDesc'),
       icon: '🌈',
       bgColor: '#ffe66d',
-      features: ['Rang identifikatsiyasi', 'Pattern tanish', 'Tez javob']
+      features: [t('games.feature9'), t('games.feature7'), t('games.feature8')]
     }
   ]
 
@@ -117,16 +119,16 @@ const GamePage = ({
             onClick={handleBackToHome}
             icon="←"
           >
-            Bosh sahifa
+            {t('games.homeButton')}
           </Button>
-          <h1>🎮 O'yin Tanlang</h1>
-          <div className="page-step">Qadam 1/2</div>
+          <h1>🎮 {t('games.selectGame')}</h1>
+          <div className="page-step">{t('games.step')} 1/2</div>
         </div>
 
         <div className="game-selection">
           <div className="selection-header">
-            <h2>Qaysi o'yinni o'ynashni xohlaysiz?</h2>
-            <p>Har bir o'yin turli ko'nikmalarni rivojlantiradi</p>
+            <h2>{t('games.whichGame')}</h2>
+            <p>{t('games.eachGameDevelops')}</p>
           </div>
 
           <div className="games-grid">
@@ -154,7 +156,7 @@ const GamePage = ({
                     icon="➡️"
                     onClick={() => handleGameSelect(game.id)}
                   >
-                    Tanlash
+                    {t('games.selectButton')}
                   </Button>
                 </div>
               </div>
@@ -162,11 +164,11 @@ const GamePage = ({
           </div>
 
           <div className="selection-tips">
-            <h3>💡 Maslahatlar:</h3>
+            <h3>💡 {t('games.tips')}</h3>
             <ul>
-              <li>Yangi boshlovchilar uchun <strong>Xotira Kartalari</strong> tavsiya etiladi</li>
-              <li>Har bir o'yin turli miyaviy ko'nikmalarni rivojlantiradi</li>
-              <li>Har kuni turli o'yinlarni o'ynab ko'ring</li>
+              <li>{t('games.gamePageTip1')}</li>
+              <li>{t('games.gamePageTip2')}</li>
+              <li>{t('games.gamePageTip3')}</li>
             </ul>
           </div>
         </div>
@@ -184,10 +186,10 @@ const GamePage = ({
             onClick={() => setGameState('selectGame')}
             icon="←"
           >
-            Orqaga
+            {t('games.back')}
           </Button>
-          <h1>🎯 Daraja Tanlang</h1>
-          <div className="page-step">Qadam 2/2</div>
+          <h1>🎯 {t('games.selectLevel')}</h1>
+          <div className="page-step">{t('games.step')} 2/2</div>
         </div>
 
         <div className="level-selection">
@@ -213,10 +215,10 @@ const GamePage = ({
               onClick={handleStartGame}
               icon="🚀"
             >
-              O'yinni Boshlash
+              {t('games.startGame')}
             </Button>
             <p className="start-hint">
-              Tayyor bo'lganingizda "Boshlash" tugmasini bosing
+              {t('games.readyToStart')}
             </p>
           </div>
         </div>
@@ -238,26 +240,26 @@ const GamePage = ({
         <Modal
           isOpen={showQuitModal}
           onClose={() => setShowQuitModal(false)}
-          title="O'yinni tark etish"
+          title={t('games.quitGame')}
           size="small"
         >
           <div className="quit-modal-content">
-            <p>Haqiqatan ham o'yinni tark etishni xohlaysizmi?</p>
-            <p className="quit-warning">Joriy progress saqlanmaydi.</p>
+            <p>{t('games.quitConfirm')}</p>
+            <p className="quit-warning">{t('games.progressNotSaved')}</p>
 
             <div className="modal-actions">
               <Button
                 variant="outline"
                 onClick={() => setShowQuitModal(false)}
               >
-                Bekor qilish
+                {t('modal.cancel')}
               </Button>
               <Button
                 variant="danger"
                 onClick={confirmQuit}
                 icon="🚪"
               >
-                Chiqish
+                {t('games.exit')}
               </Button>
             </div>
           </div>
@@ -274,8 +276,8 @@ const GamePage = ({
             <div className="game-info">
               <span className="game-icon">{currentGame.icon}</span>
               <div className="game-details">
-                <h2>O'yin Tugadi!</h2>
-                <p>{currentGame.title} - {selectedLevel === 'easy' ? 'Oson' : selectedLevel === 'medium' ? 'O\'rta' : 'Qiyin'}</p>
+                <h2>{t('game.gameEnded')}</h2>
+                <p>{currentGame.title} - {selectedLevel === 'easy' ? t('games.easy') : selectedLevel === 'medium' ? t('games.medium') : t('games.hard')}</p>
               </div>
             </div>
           </div>
@@ -290,15 +292,15 @@ const GamePage = ({
                      gameResult.score >= 1000 ? '👍' : '💪'}
                   </span>
                   <span className="score-value">{gameResult.score}</span>
-                  <span className="score-label">Ball</span>
+                  <span className="score-label">{t('game.score')}</span>
                 </div>
               </div>
 
               <div className="score-rating">
                 <h3>
-                  {gameResult.score >= 2000 ? 'Ajoyib!' :
-                   gameResult.score >= 1500 ? 'Yaxshi!' :
-                   gameResult.score >= 1000 ? 'Zo\'r!' : 'Mashq qiling!'}
+                  {gameResult.score >= 2000 ? t('game.excellent') :
+                   gameResult.score >= 1500 ? t('game.great') :
+                   gameResult.score >= 1000 ? t('game.good') : t('game.keepPracticing')}
                 </h3>
               </div>
             </div>
@@ -306,7 +308,7 @@ const GamePage = ({
             <div className="game-stats">
               <div className="stat-item">
                 <span className="stat-icon">⏱️</span>
-                <span className="stat-label">Vaqt</span>
+                <span className="stat-label">{t('game.time')}</span>
                 <span className="stat-value">
                   {Math.floor(gameResult.timeSpent / 60)}:{(gameResult.timeSpent % 60).toString().padStart(2, '0')}
                 </span>
@@ -314,28 +316,28 @@ const GamePage = ({
 
               <div className="stat-item">
                 <span className="stat-icon">🎯</span>
-                <span className="stat-label">Harakatlar</span>
+                <span className="stat-label">{t('game.actions')}</span>
                 <span className="stat-value">{gameResult.moves}</span>
               </div>
 
               <div className="stat-item">
                 <span className="stat-icon">🏆</span>
-                <span className="stat-label">Natija</span>
-                <span className="stat-value">{gameResult.won ? 'G\'alaba' : 'Mag\'lubiyat'}</span>
+                <span className="stat-label">{t('games.result')}</span>
+                <span className="stat-value">{gameResult.won ? t('games.victory') : t('games.defeat')}</span>
               </div>
             </div>
 
             {!isAuthenticated && (
               <div className="auth-prompt">
                 <div className="auth-card">
-                  <h3>🔐 Natijalarni saqlash</h3>
-                  <p>Natijalaringizni saqlash va reytingda qatnashish uchun tizimga kiring</p>
+                  <h3>🔐 {t('games.saveResults')}</h3>
+                  <p>{t('games.saveResultsDesc')}</p>
                   <Button
                     variant="primary"
                     onClick={() => onNavigate('auth')}
                     icon="📝"
                   >
-                    Ro'yxatdan O'tish
+                    {t('games.register')}
                   </Button>
                 </div>
               </div>
@@ -348,7 +350,7 @@ const GamePage = ({
                 onClick={handlePlayAgain}
                 icon="🔄"
               >
-                Yana O'ynash
+                {t('game.playAgainButton')}
               </Button>
 
               <Button
@@ -357,7 +359,7 @@ const GamePage = ({
                 onClick={handleBackToMenu}
                 icon="🎮"
               >
-                Boshqa O'yin
+                {t('games.anotherGame')}
               </Button>
 
               <Button
@@ -365,17 +367,17 @@ const GamePage = ({
                 onClick={handleBackToHome}
                 icon="🏠"
               >
-                Bosh Sahifa
+                {t('games.homeButton')}
               </Button>
             </div>
 
             <div className="motivational-message">
               {gameResult.score >= 1500 ? (
-                <p>🎉 Zo'r natija! Siz haqiqiy xotira ustasi ekansiz!</p>
+                <p>🎉 {t('game.motivational1')}</p>
               ) : gameResult.score >= 1000 ? (
-                <p>💪 Yaxshi! Biroz ko'proq mashq qiling!</p>
+                <p>💪 {t('game.motivational2')}</p>
               ) : (
-                <p>🚀 Doimiy mashq qilish orqali yaxshiroq natijalar qo'lga kiritishingiz mumkin!</p>
+                <p>🚀 {t('game.motivational3')}</p>
               )}
             </div>
           </div>

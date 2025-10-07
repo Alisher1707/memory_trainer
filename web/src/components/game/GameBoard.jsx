@@ -4,6 +4,7 @@ import Timer from './Timer'
 import ScoreCounter from './ScoreCounter'
 import Button from '../ui/Button'
 import { useAuth } from '../../contexts/AuthContext'
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const GameBoard = ({
   gameType = 'memory-cards',
@@ -13,6 +14,7 @@ const GameBoard = ({
   onQuit
 }) => {
   const { user } = useAuth()
+  const { t } = useLanguage()
 
   // Game configuration based on type and difficulty
   const getGameConfig = useCallback(() => {
@@ -303,28 +305,28 @@ const GameBoard = ({
     return (
       <div className="game-board waiting">
         <div className="game-header">
-          <h2>🎮 {gameType === 'memory-cards' ? 'Xotira Kartalari' :
-                     gameType === 'number-sequence' ? 'Raqam Ketma-ketligi' : 'Rang Ketma-ketligi'}</h2>
-          <p className="difficulty-badge">{difficulty === 'easy' ? 'Oson' : difficulty === 'medium' ? 'O\'rta' : 'Qiyin'}</p>
+          <h2>🎮 {gameType === 'memory-cards' ? t('games.memoryCardsTitle') :
+                     gameType === 'number-sequence' ? t('games.numberSequenceTitle') : t('games.colorSequenceTitle')}</h2>
+          <p className="difficulty-badge">{difficulty === 'easy' ? t('games.easy') : difficulty === 'medium' ? t('games.medium') : t('games.hard')}</p>
         </div>
 
         <div className="game-instructions">
           {gameType === 'memory-cards' ? (
             <div>
-              <h3>📝 Qoidalar:</h3>
+              <h3>📝 {t('game.rules')}</h3>
               <ul>
-                <li>Kartalarni bosing va juftlarini toping</li>
-                <li>Bir vaqtning o'zida faqat 2 ta karta ochiladi</li>
-                <li>Barcha juftlarni toping va g'olib bo'ling!</li>
+                <li>{t('game.memoryRule1')}</li>
+                <li>{t('game.memoryRule2')}</li>
+                <li>{t('game.memoryRule3')}</li>
               </ul>
             </div>
           ) : (
             <div>
-              <h3>📝 Qoidalar:</h3>
+              <h3>📝 {t('game.rules')}</h3>
               <ul>
-                <li>Ko'rsatilgan ketma-ketlikni diqqat bilan kuzating</li>
-                <li>Ketma-ketlikni to'g'ri takrorlang</li>
-                <li>Har darajada ketma-ketlik uzayadi</li>
+                <li>{t('game.sequenceRule1')}</li>
+                <li>{t('game.sequenceRule2')}</li>
+                <li>{t('game.sequenceRule3')}</li>
               </ul>
             </div>
           )}
@@ -337,7 +339,7 @@ const GameBoard = ({
             onClick={startGame}
             icon="🚀"
           >
-            O'yinni Boshlash
+            {t('games.startGame')}
           </Button>
         </div>
       </div>
@@ -348,12 +350,12 @@ const GameBoard = ({
     <div className={`game-board ${gameState}`}>
       <div className="game-header">
         <div className="game-info">
-          <h2>{gameType === 'memory-cards' ? 'Xotira Kartalari' :
-                 gameType === 'number-sequence' ? 'Raqam Ketma-ketligi' : 'Rang Ketma-ketligi'}</h2>
+          <h2>{gameType === 'memory-cards' ? t('games.memoryCardsTitle') :
+                 gameType === 'number-sequence' ? t('games.numberSequenceTitle') : t('games.colorSequenceTitle')}</h2>
           <span className="level-info">
             {gameType === 'memory-cards' ?
-              `${difficulty === 'easy' ? 'Oson' : difficulty === 'medium' ? 'O\'rta' : 'Qiyin'} daraja` :
-              `Daraja ${currentLevel}`
+              `${difficulty === 'easy' ? t('games.easy') : difficulty === 'medium' ? t('games.medium') : t('games.hard')} ${t('game.levelLabel')}` :
+              `${t('game.levelNumber')} ${currentLevel}`
             }
           </span>
         </div>
@@ -365,7 +367,7 @@ const GameBoard = ({
             onClick={gameState === 'paused' ? resumeGame : pauseGame}
             icon={gameState === 'paused' ? '▶️' : '⏸️'}
           >
-            {gameState === 'paused' ? 'Davom' : 'Pauza'}
+            {gameState === 'paused' ? t('game.resume') : t('game.pause')}
           </Button>
 
           <Button
@@ -374,7 +376,7 @@ const GameBoard = ({
             onClick={onQuit}
             icon="🚪"
           >
-            Chiqish
+            {t('games.exit')}
           </Button>
         </div>
       </div>
@@ -397,13 +399,13 @@ const GameBoard = ({
         <div className="game-metrics">
           <div className="metric">
             <span className="metric-icon">🎯</span>
-            <span className="metric-label">Harakatlar</span>
+            <span className="metric-label">{t('game.movesLabel')}</span>
             <span className="metric-value">{moves}</span>
           </div>
 
           <div className="metric">
             <span className="metric-icon">❤️</span>
-            <span className="metric-label">Imkonlar</span>
+            <span className="metric-label">{t('game.livesLabel')}</span>
             <span className="metric-value">{lives}</span>
           </div>
         </div>

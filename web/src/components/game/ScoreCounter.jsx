@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const ScoreCounter = ({
   score = 0,
@@ -8,6 +9,7 @@ const ScoreCounter = ({
   animateChanges = true,
   size = 'medium'
 }) => {
+  const { t } = useLanguage()
   const [displayScore, setDisplayScore] = useState(score)
   const [isIncreasing, setIsIncreasing] = useState(false)
   const [scoreIncrease, setScoreIncrease] = useState(0)
@@ -63,11 +65,11 @@ const ScoreCounter = ({
   }
 
   const getScoreRating = (currentScore) => {
-    if (currentScore >= 2000) return { emoji: '🔥', color: '#ff6b6b', label: 'Ajoyib!' }
-    if (currentScore >= 1500) return { emoji: '⭐', color: '#feca57', label: 'Yaxshi!' }
-    if (currentScore >= 1000) return { emoji: '👍', color: '#48dbfb', label: 'Zo\'r!' }
-    if (currentScore >= 500) return { emoji: '😊', color: '#1dd1a1', label: 'Yaxshi!' }
-    return { emoji: '💪', color: '#a55eea', label: 'Davom eting!' }
+    if (currentScore >= 2000) return { emoji: '🔥', color: '#ff6b6b', label: t('game.scoreExcellent') }
+    if (currentScore >= 1500) return { emoji: '⭐', color: '#feca57', label: t('game.scoreGreat') }
+    if (currentScore >= 1000) return { emoji: '👍', color: '#48dbfb', label: t('game.scoreGood') }
+    if (currentScore >= 500) return { emoji: '😊', color: '#1dd1a1', label: t('game.scoreNice') }
+    return { emoji: '💪', color: '#a55eea', label: t('game.scoreKeepGoing') }
   }
 
   const rating = getScoreRating(displayScore)
@@ -83,7 +85,7 @@ const ScoreCounter = ({
         <div className="score-content">
           <div className="score-value">
             <span className="score-number">{formatScore(displayScore)}</span>
-            <span className="score-label">ball</span>
+            <span className="score-label">{t('game.scoreLabel')}</span>
           </div>
 
           <div className="score-rating" style={{ color: rating.color }}>
@@ -102,9 +104,9 @@ const ScoreCounter = ({
         <div className="score-best">
           <div className="best-label">
             {isNewBest ? (
-              <span className="new-best">🏆 Yangi rekord!</span>
+              <span className="new-best">🏆 {t('game.newBestScore')}</span>
             ) : (
-              <span className="best-normal">📊 Eng yaxshi:</span>
+              <span className="best-normal">📊 {t('game.bestScoreLabel')}</span>
             )}
           </div>
           <div className="best-value">

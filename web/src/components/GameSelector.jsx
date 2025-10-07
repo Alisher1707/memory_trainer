@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
+import { useLanguage } from '../contexts/LanguageContext'
 
 const GameSelector = ({ onStartGame, onBack }) => {
+  const { t } = useLanguage()
   const [selectedGame, setSelectedGame] = useState(null)
   const [selectedDifficulty, setSelectedDifficulty] = useState('easy')
   const [step, setStep] = useState('selectGame') // selectGame, selectDifficulty
@@ -8,51 +10,51 @@ const GameSelector = ({ onStartGame, onBack }) => {
   const games = [
     {
       id: 'memory-cards',
-      title: 'Xotira Kartalari',
-      description: 'Kartalarni aylantiring va juftlarini toping',
+      title: t('games.memoryCardsTitle'),
+      description: t('games.memoryCardsDesc'),
       icon: '🃏',
       bgColor: '#ff6b6b',
-      features: ['Vizual xotira', 'Diqqat jamlash', 'Tezlik']
+      features: [t('games.feature3'), t('games.feature1'), t('games.feature2')]
     },
     {
       id: 'number-sequence',
-      title: 'Raqam Ketma-ketligi',
-      description: 'Ko\'rsatilgan raqamlar ketma-ketligini takrorlang',
+      title: t('games.numberSequenceTitle'),
+      description: t('games.numberSequenceDesc'),
       icon: '🔢',
       bgColor: '#4ecdc4',
-      features: ['Raqamli xotira', 'Ketma-ketlik', 'Konsentratsiya']
+      features: [t('games.feature6'), t('games.feature4'), t('games.feature5')]
     },
     {
       id: 'color-sequence',
-      title: 'Rang Ketma-ketligi',
-      description: 'Ranglar tartibini eslab qoling va takrorlang',
+      title: t('games.colorSequenceTitle'),
+      description: t('games.colorSequenceDesc'),
       icon: '🌈',
       bgColor: '#ffe66d',
-      features: ['Rang identifikatsiyasi', 'Pattern tanish', 'Tez javob']
+      features: [t('games.feature9'), t('games.feature7'), t('games.feature8')]
     }
   ]
 
   const difficulties = [
     {
       id: 'easy',
-      name: 'Oson',
+      name: t('games.easyName'),
       icon: '😊',
-      description: 'Yangi boshlovchilar uchun',
-      details: 'Kam elementlar, ko\'p vaqt, 5 ta imkon'
+      description: t('games.easyDesc'),
+      details: t('games.easyDetails')
     },
     {
       id: 'medium',
-      name: 'O\'rta',
+      name: t('games.mediumName'),
       icon: '🤔',
-      description: 'Biroz qiyinroq',
-      details: 'O\'rta elementlar, cheklangan vaqt, 3 ta imkon'
+      description: t('games.mediumDesc'),
+      details: t('games.mediumDetails')
     },
     {
       id: 'hard',
-      name: 'Qiyin',
+      name: t('games.hardName'),
       icon: '😤',
-      description: 'Professionallar uchun',
-      details: 'Ko\'p elementlar, kam vaqt, 2 ta imkon'
+      description: t('games.hardDesc'),
+      details: t('games.hardDetails')
     }
   ]
 
@@ -79,10 +81,10 @@ const GameSelector = ({ onStartGame, onBack }) => {
       <div className="game-selector">
         <div className="selector-header">
           <button className="back-button" onClick={handleBack}>
-            ← Orqaga
+            ← {t('games.back')}
           </button>
-          <h2>🎮 O'yin Tanlang</h2>
-          <p className="step-indicator">Qadam 1/2</p>
+          <h2>🎮 {t('games.selectGame')}</h2>
+          <p className="step-indicator">{t('games.step')} 1/2</p>
         </div>
 
         <div className="games-grid">
@@ -110,7 +112,7 @@ const GameSelector = ({ onStartGame, onBack }) => {
                 </div>
 
                 <button className="select-game-btn">
-                  Tanlash ➡️
+                  {t('games.selectButton')} ➡️
                 </button>
               </div>
             </div>
@@ -118,11 +120,11 @@ const GameSelector = ({ onStartGame, onBack }) => {
         </div>
 
         <div className="tips-section">
-          <h3>💡 Maslahatlar:</h3>
+          <h3>💡 {t('games.tips')}</h3>
           <ul>
-            <li>Har bir o'yin turli ko'nikmalarni rivojlantiradi</li>
-            <li>Boshlang'ichlar uchun Xotira Kartalari tavsiya etiladi</li>
-            <li>Har kuni turli o'yinlarni o'ynab ko'ring</li>
+            <li>{t('games.tip1')}</li>
+            <li>{t('games.tip2')}</li>
+            <li>{t('games.tip3')}</li>
           </ul>
         </div>
       </div>
@@ -135,10 +137,10 @@ const GameSelector = ({ onStartGame, onBack }) => {
     <div className="game-selector difficulty-selection">
       <div className="selector-header">
         <button className="back-button" onClick={handleBack}>
-          ← Orqaga
+          ← {t('games.back')}
         </button>
-        <h2>🎯 Daraja Tanlang</h2>
-        <p className="step-indicator">Qadam 2/2</p>
+        <h2>🎯 {t('games.selectLevel')}</h2>
+        <p className="step-indicator">{t('games.step')} 2/2</p>
       </div>
 
       <div className="selected-game-info">
@@ -152,7 +154,7 @@ const GameSelector = ({ onStartGame, onBack }) => {
       </div>
 
       <div className="difficulty-selector">
-        <h3>Qiyinlik darajasini tanlang:</h3>
+        <h3>{t('games.selectDifficultyTitle')}</h3>
         <div className="difficulty-cards">
           {difficulties.map((diff) => (
             <div
@@ -167,7 +169,7 @@ const GameSelector = ({ onStartGame, onBack }) => {
               <p className="diff-description">{diff.description}</p>
               <p className="diff-details">{diff.details}</p>
               <div className="selection-indicator">
-                {selectedDifficulty === diff.id ? '✅ Tanlangan' : 'Tanlash'}
+                {selectedDifficulty === diff.id ? `✅ ${t('games.selected')}` : t('games.selectButton')}
               </div>
             </div>
           ))}
@@ -176,10 +178,10 @@ const GameSelector = ({ onStartGame, onBack }) => {
 
       <div className="start-section">
         <button className="start-game-button" onClick={handleStartGame}>
-          🚀 O'yinni Boshlash
+          🚀 {t('games.startGame')}
         </button>
         <p className="game-start-hint">
-          Tayyor bo'lganingizda "Boshlash" tugmasini bosing
+          {t('games.readyToStart')}
         </p>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import Button from '../ui/Button'
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const LevelSelector = ({
   selectedLevel = 'easy',
@@ -7,47 +8,48 @@ const LevelSelector = ({
   showPreview = true,
   compact = false
 }) => {
+  const { t } = useLanguage()
   const [hoveredLevel, setHoveredLevel] = useState(null)
 
   const levels = [
     {
       id: 'easy',
-      name: 'Oson',
+      name: t('games.easyName'),
       icon: '😊',
-      description: 'Yangi boshlovchilar uchun',
-      details: 'Kam elementlar, ko\'p vaqt, 5 ta imkon',
+      description: t('games.easyDesc'),
+      details: t('games.easyDetails'),
       color: '#4CAF50',
       stats: {
         elements: '4-6',
-        time: 'Cheksiz',
+        time: t('games.unlimited'),
         lives: '5',
         multiplier: '1x'
       }
     },
     {
       id: 'medium',
-      name: 'O\'rta',
+      name: t('games.mediumName'),
       icon: '🤔',
-      description: 'Biroz qiyinroq',
-      details: 'O\'rta elementlar, cheklangan vaqt, 3 ta imkon',
+      description: t('games.mediumDesc'),
+      details: t('games.mediumDetails'),
       color: '#FF9800',
       stats: {
         elements: '6-8',
-        time: '2 daqiqa',
+        time: `2 ${t('games.minute')}`,
         lives: '3',
         multiplier: '1.5x'
       }
     },
     {
       id: 'hard',
-      name: 'Qiyin',
+      name: t('games.hardName'),
       icon: '😤',
-      description: 'Professionallar uchun',
-      details: 'Ko\'p elementlar, kam vaqt, 2 ta imkon',
+      description: t('games.hardDesc'),
+      details: t('games.hardDetails'),
       color: '#F44336',
       stats: {
         elements: '8-12',
-        time: '90 soniya',
+        time: `90 ${t('games.seconds')}`,
         lives: '2',
         multiplier: '2x'
       }
@@ -81,8 +83,8 @@ const LevelSelector = ({
   return (
     <div className="level-selector">
       <div className="level-selector-header">
-        <h3>🎯 Qiyinlik Darajasini Tanlang</h3>
-        <p>Sizning tajribangizga mos darajani tanlang</p>
+        <h3>🎯 {t('games.selectDifficultyLevel')}</h3>
+        <p>{t('games.chooseLevel')}</p>
       </div>
 
       <div className="level-options">
@@ -96,7 +98,7 @@ const LevelSelector = ({
             <div className="level-header">
               <div className="level-icon">{level.icon}</div>
               <div className="level-info">
-                <h4>{level.name} daraja</h4>
+                <h4>{level.name} {t('games.level')}</h4>
                 <p>{level.details}</p>
               </div>
               <div className="level-selector-radio">
@@ -106,15 +108,15 @@ const LevelSelector = ({
 
             <div className="level-challenge">
               <div className="challenge-item">
-                <span className="challenge-label">Maqsad:</span>
+                <span className="challenge-label">{t('games.goal')}</span>
                 <span className="challenge-value">
-                  Barcha juftlarni {level.stats.time === 'Cheksiz' ? 'toping' : `${level.stats.time} ichida toping`}
+                  {level.stats.time === t('games.unlimited') ? t('games.findAllPairs') : `${t('games.findAllPairs')} ${level.stats.time}`}
                 </span>
               </div>
               <div className="challenge-item">
-                <span className="challenge-label">Mukofot:</span>
+                <span className="challenge-label">{t('games.reward')}</span>
                 <span className="challenge-value">
-                  Ball {level.stats.multiplier} ko'paytiriladi
+                  {t('games.scoreMultiplied').replace('{multiplier}', level.stats.multiplier)}
                 </span>
               </div>
             </div>
