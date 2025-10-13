@@ -208,14 +208,14 @@ const HomePage = ({ onNavigate }) => {
             <div className="cta-actions">
               <Button
                 variant="primary"
-                size="large"
+                size="medium"
                 onClick={() => onNavigate('auth')}
               >
                 {t('auth.signup')}
               </Button>
               <Button
                 variant="outline"
-                size="large"
+                size="medium"
                 onClick={() => onNavigate('game')}
               >
                 {t('auth.playAsGuest')}
@@ -224,7 +224,7 @@ const HomePage = ({ onNavigate }) => {
           ) : (
             <Button
               variant="primary"
-              size="large"
+              size="medium"
               onClick={() => onNavigate('game')}
             >
               {t('home.startGame')}

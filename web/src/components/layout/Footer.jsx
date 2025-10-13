@@ -1,6 +1,9 @@
 import React from 'react'
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const Footer = () => {
+  const { t } = useLanguage()
+
   return (
     <footer className="footer">
       <div className="footer-container">
@@ -11,34 +14,34 @@ const Footer = () => {
               <span className="brand-text">Memory Trainer</span>
             </div>
             <p className="footer-description">
-              Xotirangizni rivojlantirish uchun eng yaxshi o'yin platformasi
+              {t('footer.description')}
             </p>
           </div>
 
           <div className="footer-section">
-            <h4>O'yinlar</h4>
+            <h4>{t('footer.gamesSection')}</h4>
             <ul className="footer-links">
-              <li><a href="#memory-cards">🃏 Xotira Kartalari</a></li>
-              <li><a href="#number-sequence">🔢 Raqam Ketma-ketligi</a></li>
-              <li><a href="#color-sequence">🌈 Rang Ketma-ketligi</a></li>
+              <li><a href="#memory-cards">🃏 {t('games.memoryCards')}</a></li>
+              <li><a href="#number-sequence">🔢 {t('games.numberSequence')}</a></li>
+              <li><a href="#color-sequence">🌈 {t('games.colorSequence')}</a></li>
             </ul>
           </div>
 
           <div className="footer-section">
-            <h4>Sahifalar</h4>
+            <h4>{t('footer.pagesSection')}</h4>
             <ul className="footer-links">
-              <li><a href="#leaderboard">🏆 Reytinglar</a></li>
-              <li><a href="#profile">👤 Profil</a></li>
-              <li><a href="#settings">⚙️ Sozlamalar</a></li>
+              <li><a href="#leaderboard">🏆 {t('nav.leaderboard')}</a></li>
+              <li><a href="#profile">👤 {t('nav.profile')}</a></li>
+              <li><a href="#settings">⚙️ {t('nav.settings')}</a></li>
             </ul>
           </div>
 
           <div className="footer-section">
-            <h4>Ma'lumot</h4>
+            <h4>{t('footer.infoSection')}</h4>
             <ul className="footer-links">
-              <li><a href="#about">ℹ️ Loyiha haqida</a></li>
-              <li><a href="#help">❓ Yordam</a></li>
-              <li><a href="#privacy">🔒 Maxfiylik</a></li>
+              <li><a href="#about">ℹ️ {t('footer.about')}</a></li>
+              <li><a href="#help">❓ {t('settings.help')}</a></li>
+              <li><a href="#privacy">🔒 {t('settings.privacy')}</a></li>
             </ul>
           </div>
         </div>
@@ -47,16 +50,16 @@ const Footer = () => {
 
         <div className="footer-bottom">
           <div className="footer-copyright">
-            <p>&copy; 2024 Memory Trainer. Barcha huquqlar himoyalangan.</p>
-            <p className="version-info">Versiya 1.0.0</p>
+            <p>&copy; 2024 Memory Trainer. {t('footer.rights')}</p>
+            <p className="version-info">{t('footer.version')} 1.0.0</p>
           </div>
 
           <div className="footer-stats">
-            <span className="stat-text">3 O'yin</span>
+            <span className="stat-text">3 {t('footer.games')}</span>
             <span className="stat-divider">•</span>
-            <span className="stat-text">Global Reyting</span>
+            <span className="stat-text">{t('footer.globalRating')}</span>
             <span className="stat-divider">•</span>
-            <span className="stat-text">Statistika</span>
+            <span className="stat-text">{t('footer.statistics')}</span>
           </div>
         </div>
       </div>

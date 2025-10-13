@@ -367,5 +367,17 @@
     "retry": "Retry",
     "continue": "Continue",
     "back": "Back"
+  },
+  "footer": {
+    "description": "The best gaming platform to develop your memory",
+    "gamesSection": "Games",
+    "pagesSection": "Pages",
+    "infoSection": "Information",
+    "about": "About Project",
+    "rights": "All rights reserved.",
+    "version": "Version",
+    "games": "Games",
+    "globalRating": "Global Rating",
+    "statistics": "Statistics"
   }
 }

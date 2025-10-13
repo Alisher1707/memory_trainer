@@ -367,5 +367,17 @@
     "retry": "Qayta urinish",
     "continue": "Davom etish",
     "back": "Orqaga"
+  },
+  "footer": {
+    "description": "Xotirangizni rivojlantirish uchun eng yaxshi o'yin platformasi",
+    "gamesSection": "O'yinlar",
+    "pagesSection": "Sahifalar",
+    "infoSection": "Ma'lumot",
+    "about": "Loyiha haqida",
+    "rights": "Barcha huquqlar himoyalangan.",
+    "version": "Versiya",
+    "games": "O'yin",
+    "globalRating": "Global Reyting",
+    "statistics": "Statistika"
   }
 }
