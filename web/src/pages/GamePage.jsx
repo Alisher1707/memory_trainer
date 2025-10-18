@@ -21,12 +21,12 @@ const GamePage = ({
 
   const games = [
     {
-      id: 'memory-cards',
-      title: t('games.memoryCardsTitle'),
-      description: t('games.memoryCardsDesc'),
-      icon: '🃏',
-      bgColor: '#ff6b6b',
-      features: [t('games.feature3'), t('games.feature1'), t('games.feature2')]
+      id: 'n-back',
+      title: t('games.nBackTitle'),
+      description: t('games.nBackDesc'),
+      icon: '🧠',
+      bgColor: '#667eea',
+      features: [t('games.feature10'), t('games.feature11'), t('games.feature12')]
     },
     {
       id: 'number-sequence',
@@ -37,12 +37,12 @@ const GamePage = ({
       features: [t('games.feature6'), t('games.feature4'), t('games.feature5')]
     },
     {
-      id: 'color-sequence',
-      title: t('games.colorSequenceTitle'),
-      description: t('games.colorSequenceDesc'),
-      icon: '🌈',
-      bgColor: '#ffe66d',
-      features: [t('games.feature9'), t('games.feature7'), t('games.feature8')]
+      id: 'mental-math',
+      title: t('games.mentalMathTitle'),
+      description: t('games.mentalMathDesc'),
+      icon: '🧮',
+      bgColor: '#f59e0b',
+      features: [t('games.feature13'), t('games.feature14'), t('games.feature15')]
     }
   ]
 
@@ -177,6 +177,11 @@ const GamePage = ({
   }
 
   if (gameState === 'selectLevel') {
+    if (!currentGame) {
+      setGameState('selectGame')
+      return null
+    }
+
     return (
       <div className="page-container">
         <div className="page-header">
@@ -269,12 +274,19 @@ const GamePage = ({
   }
 
   if (gameState === 'results') {
+    if (!currentGame) {
+      setGameState('selectGame')
+      return null
+    }
+
     return (
       <div className="page-container">
         <div className="results-page">
           <div className="results-header">
             <div className="game-info">
-              <span className="game-icon">{currentGame.icon}</span>
+              <div className="header-score-badge">
+                <span className="header-score-value">{gameResult.score}</span>
+              </div>
               <div className="game-details">
                 <h2>{t('game.gameEnded')}</h2>
                 <p>{currentGame.title} - {selectedLevel === 'easy' ? t('games.easy') : selectedLevel === 'medium' ? t('games.medium') : t('games.hard')}</p>
@@ -283,28 +295,6 @@ const GamePage = ({
           </div>
 
           <div className="results-content">
-            <div className="score-section">
-              <div className="main-score">
-                <div className="score-circle">
-                  <span className="score-emoji">
-                    {gameResult.score >= 2000 ? '🔥' :
-                     gameResult.score >= 1500 ? '⭐' :
-                     gameResult.score >= 1000 ? '👍' : '💪'}
-                  </span>
-                  <span className="score-value">{gameResult.score}</span>
-                  <span className="score-label">{t('game.score')}</span>
-                </div>
-              </div>
-
-              <div className="score-rating">
-                <h3>
-                  {gameResult.score >= 2000 ? t('game.excellent') :
-                   gameResult.score >= 1500 ? t('game.great') :
-                   gameResult.score >= 1000 ? t('game.good') : t('game.keepPracticing')}
-                </h3>
-              </div>
-            </div>
-
             <div className="game-stats">
               <div className="stat-item">
                 <span className="stat-icon">⏱️</span>

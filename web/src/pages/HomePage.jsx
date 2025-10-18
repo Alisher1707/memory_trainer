@@ -9,13 +9,13 @@ const HomePage = ({ onNavigate }) => {
 
   const games = [
     {
-      id: 'memory-cards',
-      title: t('home.memoryCardsTitle'),
-      description: t('home.memoryCardsDesc'),
-      icon: '🃏',
+      id: 'n-back',
+      title: t('home.nBackTitle'),
+      description: t('home.nBackDesc'),
+      icon: '🧠',
       difficulty: t('home.beginner'),
       duration: t('home.duration1'),
-      bgColor: '#ff6b6b',
+      bgColor: '#667eea',
       players: '1.2K+'
     },
     {
@@ -29,13 +29,13 @@ const HomePage = ({ onNavigate }) => {
       players: '890+'
     },
     {
-      id: 'color-sequence',
-      title: t('home.colorSequenceTitle'),
-      description: t('home.colorSequenceDesc'),
-      icon: '🌈',
+      id: 'mental-math',
+      title: t('home.mentalMathTitle'),
+      description: t('home.mentalMathDesc'),
+      icon: '🧮',
       difficulty: t('home.advanced'),
       duration: t('home.duration3'),
-      bgColor: '#ffe66d',
+      bgColor: '#f59e0b',
       players: '650+'
     }
   ]

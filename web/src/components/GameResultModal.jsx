@@ -7,7 +7,8 @@ const GameResultModal = ({
   onClose,
   gameResult,
   onPlayAgain,
-  onMainMenu
+  onMainMenu,
+  onSelectGame
 }) => {
   const { user, isAuthenticated, updateUserStats } = useAuth()
   const { t } = useLanguage()
@@ -144,14 +145,14 @@ const GameResultModal = ({
 
         <div className="score-section">
           <div className="main-score">
-            <div className="score-circle" style={{ borderColor: rating.color }}>
+            <div className="score-circle">
               <span className="score-emoji">{rating.emoji}</span>
               <span className="score-value">{gameResult.score}</span>
               <span className="score-label">{t('game.score')}</span>
             </div>
           </div>
 
-          <div className="score-rating" style={{ color: rating.color }}>
+          <div className="score-rating">
             <h2>{rating.text}</h2>
           </div>
 
@@ -188,6 +189,30 @@ const GameResultModal = ({
           )}
         </div>
 
+        <div className="motivational-message">
+          {gameResult.score >= 1500 ? (
+            <p>🎉 {t('game.motivational1')}</p>
+          ) : gameResult.score >= 1000 ? (
+            <p>💪 {t('game.motivational2')}</p>
+          ) : (
+            <p>🚀 {t('game.motivational3')}</p>
+          )}
+        </div>
+
+        <div className="action-buttons">
+          <button className="play-again-button" onClick={onPlayAgain}>
+            <span>🔄 {t('game.playAgainButton')}</span>
+          </button>
+
+          <button className="select-game-button" onClick={onSelectGame}>
+            <span>🎮 {t('game.selectGameButton')}</span>
+          </button>
+
+          <button className="main-menu-button" onClick={onMainMenu}>
+            <span>🏠 {t('game.mainMenuButton')}</span>
+          </button>
+        </div>
+
         {isAuthenticated ? (
           <div className="submission-status">
             {isSubmitting ? (
@@ -212,26 +237,6 @@ const GameResultModal = ({
             <small>{t('game.guestModeWarning')}</small>
           </div>
         )}
-
-        <div className="action-buttons">
-          <button className="play-again-button" onClick={onPlayAgain}>
-            🔄 {t('game.playAgainButton')}
-          </button>
-
-          <button className="main-menu-button" onClick={onMainMenu}>
-            🏠 {t('game.mainMenuButton')}
-          </button>
-        </div>
-
-        <div className="motivational-message">
-          {gameResult.score >= 1500 ? (
-            <p>🎉 {t('game.motivational1')}</p>
-          ) : gameResult.score >= 1000 ? (
-            <p>💪 {t('game.motivational2')}</p>
-          ) : (
-            <p>🚀 {t('game.motivational3')}</p>
-          )}
-        </div>
       </div>
     </div>
   )

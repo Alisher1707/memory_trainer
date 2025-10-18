@@ -126,11 +126,26 @@ body.dark-mode .tip-item p {
   left: 0;
   right: 0;
   bottom: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0.6;
+  opacity: 0.4;
   z-index: 1;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .hero-overlay {
@@ -139,7 +154,8 @@ body.dark-mode .tip-item p {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(240, 244, 248, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%);
+  background: linear-gradient(135deg, rgba(240, 244, 248, 0.75) 0%, rgba(255, 255, 255, 0.6) 50%, rgba(232, 238, 243, 0.75) 100%);
+  backdrop-filter: blur(1px);
   z-index: 2;
 }
 
@@ -210,9 +226,10 @@ body.dark-mode .tip-item p {
 .pattern-circle {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle, var(--primary-300) 0%, transparent 70%);
-  opacity: 0.15;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.5) 0%, rgba(118, 75, 162, 0.3) 40%, transparent 70%);
+  opacity: 0.6;
   animation: floatCircle 8s ease-in-out infinite;
+  filter: blur(20px);
 }
 
 .pattern-1 {
@@ -243,9 +260,9 @@ body.dark-mode .tip-item p {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-image: radial-gradient(circle, var(--primary-400) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(102, 126, 234, 0.4) 2px, transparent 2px);
   background-size: 40px 40px;
-  opacity: 0.08;
+  opacity: 0.3;
   animation: moveDots 20s linear infinite;
 }
 

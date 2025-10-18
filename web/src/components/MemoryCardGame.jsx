@@ -110,6 +110,11 @@ const MemoryCardGame = ({ onBack, difficulty = 'easy' }) => {
     initializeGame()
   }
 
+  const handleSelectGame = () => {
+    setShowResultModal(false)
+    onBack() // Goes back to game selection
+  }
+
   const handleMainMenu = () => {
     setShowResultModal(false)
     onBack()
@@ -242,6 +247,7 @@ const MemoryCardGame = ({ onBack, difficulty = 'easy' }) => {
         onClose={() => setShowResultModal(false)}
         gameResult={gameResult}
         onPlayAgain={handlePlayAgain}
+        onSelectGame={handleSelectGame}
         onMainMenu={handleMainMenu}
       />
     </div>

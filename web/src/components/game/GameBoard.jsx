@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react'
 import Card from './Card'
 import Timer from './Timer'
 import ScoreCounter from './ScoreCounter'
+import NBackGame from './NBackGame'
+import MentalMathGame from './MentalMathGame'
 import Button from '../ui/Button'
 import { useAuth } from '../../contexts/AuthContext'
 import { useLanguage } from '../../contexts/LanguageContext'
@@ -33,6 +35,16 @@ const GameBoard = ({
         easy: { length: 3, timeLimit: null, showTime: 800 },
         medium: { length: 4, timeLimit: 45, showTime: 600 },
         hard: { length: 5, timeLimit: 30, showTime: 400 }
+      },
+      'n-back': {
+        easy: { nBack: 1, timeLimit: 60, showTime: 2500 },
+        medium: { nBack: 2, timeLimit: 75, showTime: 2000 },
+        hard: { nBack: 3, timeLimit: 90, showTime: 1500 }
+      },
+      'mental-math': {
+        easy: { timePerQuestion: 10, totalQuestions: 15 },
+        medium: { timePerQuestion: 8, totalQuestions: 20 },
+        hard: { timePerQuestion: 6, totalQuestions: 25 }
       }
     }
     return configs[gameType][difficulty]
@@ -301,7 +313,47 @@ const GameBoard = ({
     setGameState('playing')
   }
 
-  if (gameState === 'waiting') {
+  if (gameState === 'waiting' || (gameType === 'n-back' && gameState === 'playing') || (gameType === 'mental-math' && gameState === 'playing')) {
+    // For N-Back game, show its own intro screen
+    if (gameType === 'n-back') {
+      return (
+        <div className="game-board">
+          <NBackGame
+            difficulty={difficulty}
+            onGameEnd={endGame}
+            gameState={gameState}
+            lives={lives}
+            setLives={setLives}
+            moves={moves}
+            setMoves={setMoves}
+            score={score}
+            setScore={setScore}
+            onQuit={onQuit}
+          />
+        </div>
+      )
+    }
+
+    // For Mental Math game, show its own interface
+    if (gameType === 'mental-math') {
+      return (
+        <div className="game-board">
+          <MentalMathGame
+            difficulty={difficulty}
+            onGameEnd={endGame}
+            gameState={gameState}
+            lives={lives}
+            setLives={setLives}
+            moves={moves}
+            setMoves={setMoves}
+            score={score}
+            setScore={setScore}
+            onQuit={onQuit}
+          />
+        </div>
+      )
+    }
+
     return (
       <div className="game-board waiting">
         <div className="game-header">
@@ -351,7 +403,8 @@ const GameBoard = ({
       <div className="game-header">
         <div className="game-info">
           <h2>{gameType === 'memory-cards' ? t('games.memoryCardsTitle') :
-                 gameType === 'number-sequence' ? t('games.numberSequenceTitle') : t('games.colorSequenceTitle')}</h2>
+                 gameType === 'number-sequence' ? t('games.numberSequenceTitle') :
+                 gameType === 'n-back' ? t('games.nBackTitle') : t('games.colorSequenceTitle')}</h2>
           <span className="level-info">
             {gameType === 'memory-cards' ?
               `${difficulty === 'easy' ? t('games.easy') : difficulty === 'medium' ? t('games.medium') : t('games.hard')} ${t('game.levelLabel')}` :
@@ -412,7 +465,19 @@ const GameBoard = ({
       </div>
 
       <div className="game-area">
-        {gameType === 'memory-cards' ? (
+        {gameType === 'n-back' ? (
+          <NBackGame
+            difficulty={difficulty}
+            onGameEnd={endGame}
+            gameState={gameState}
+            lives={lives}
+            setLives={setLives}
+            moves={moves}
+            setMoves={setMoves}
+            score={score}
+            setScore={setScore}
+          />
+        ) : gameType === 'memory-cards' ? (
           <div className="cards-grid" style={{ '--pairs': gameConfig.pairs }}>
             {cards.map((card) => (
               <Card
